@@ -1,0 +1,40 @@
+.notification-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .user-select-box {
+    display: flex;
+    flex-direction: column;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fafafa;
+    margin-top: 8px;
+  }
+  
+  .user-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .user-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #0d6efd;
+  }
+  
+  .user-checkbox:hover {
+    background-color: #e9f5ff;
+    border-radius: 6px;
+  }
+  

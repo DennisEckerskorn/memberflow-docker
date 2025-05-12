@@ -1,0 +1,27 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f5f6fa; /* Fondo general clarito */
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar ocupa su espacio y ContentArea el resto */
+.sidebar {
+  flex-shrink: 0;
+  width: 320px;
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f5f6fa;
+  overflow-y: auto;
+  box-sizing: border-box;
+}

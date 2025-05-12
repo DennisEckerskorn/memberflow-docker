@@ -1,0 +1,47 @@
+.sidebar {
+  width: 320px;
+  background-color: #ffffff;
+  color: #2d3436;
+  padding: 0; /* importante para evitar que el padding afecte la altura */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.sidebar h4 {
+  padding: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0984e3;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 10px 18px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 12px;
+  background-color: #dfe6e9;
+  color: #2d3436;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar button:hover {
+  background-color: #b2bec3;
+  color: #ffffff;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
