@@ -7,10 +7,12 @@ const Topbar = () => {
   const navigate = useNavigate();
   const role = getRoleFromToken();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-  };
+ const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('roleName');
+  navigate('/');
+};
+
 
   const roleLabel = {
     FULL_ACCESS: 'Admin',

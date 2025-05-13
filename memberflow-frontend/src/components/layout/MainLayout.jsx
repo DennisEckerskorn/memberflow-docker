@@ -22,6 +22,7 @@ import TrainingSessionList from '../lists/TrainingSessionList';
 import ViewTimetable from '../forms/ViewTimetable';
 import MembershipForm from '../forms/MembershipCreateForm';
 import MembershipList from '../lists/MembershipList';
+import InvoiceForm from '../forms/InvoiceForm';
 import '../styles/MainLayout.css';
 
 
@@ -52,6 +53,7 @@ const MainLayout = () => {
             {/* ContentArea general para secciones sin componentes específicos */}
             <Route path="/admin/user-management/*" element={<ContentArea />} />
             <Route path="/admin/class-management/*" element={<ContentArea />} />
+            <Route path="/admin/finance/*" element={<ContentArea />} />
 
             {/*Class Management - rutas específicas*/}
             <Route path="/admin/class-management/training-groups/create" element={<TrainingGroupForm />} />
@@ -65,13 +67,8 @@ const MainLayout = () => {
             <Route path="/admin/class-management/memberships/list" element={<MembershipList />} />
 
 
-
-
-
-
-
-
-            <Route path="/admin/finance/*" element={<ContentArea />} />
+         
+            <Route path="/admin/finance/invoices/create" element={<InvoiceForm />} />
 
             {/* Profile Page*/}
             <Route path="/profile" element={<ProfilePage />} />

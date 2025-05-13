@@ -13,3 +13,8 @@ export const getRoleFromToken = () => {
     return null;
   }
 };
+
+export const getRoleFromStorage = () => {
+  return localStorage.getItem('roleName');
+};
+

@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO: test
 @RestController
 @RequestMapping("/api/v1/admins")
 @Tag(name = "Administrator Management", description = "Operations related to administrator management")
