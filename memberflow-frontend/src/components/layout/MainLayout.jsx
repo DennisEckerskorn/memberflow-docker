@@ -23,6 +23,7 @@ import ViewTimetable from '../forms/ViewTimetable';
 import MembershipForm from '../forms/MembershipCreateForm';
 import MembershipList from '../lists/MembershipList';
 import InvoiceForm from '../forms/InvoiceForm';
+import InvoiceList from '../lists/InvoiceList';
 import '../styles/MainLayout.css';
 
 
@@ -66,9 +67,8 @@ const MainLayout = () => {
             <Route path="/admin/class-management/memberships/create" element={<MembershipForm />} />
             <Route path="/admin/class-management/memberships/list" element={<MembershipList />} />
 
-
-         
             <Route path="/admin/finance/invoices/create" element={<InvoiceForm />} />
+            <Route path="/admin/finance/invoices/list" element={<InvoiceList />} />
 
             {/* Profile Page*/}
             <Route path="/profile" element={<ProfilePage />} />

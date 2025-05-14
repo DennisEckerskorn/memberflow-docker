@@ -1,5 +1,6 @@
 package com.denniseckerskorn.dtos.finance_management_dtos;
 
+import com.denniseckerskorn.dtos.user_managment_dtos.UserDTO;
 import com.denniseckerskorn.entities.finance.Invoice;
 import com.denniseckerskorn.enums.StatusValues;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,9 @@ public class InvoiceDTO {
 
     @NotNull
     private Integer userId;
+
+    private UserDTO user;
+
 
     @NotNull
     private LocalDateTime date;
@@ -35,6 +39,7 @@ public class InvoiceDTO {
     public InvoiceDTO(Invoice invoice) {
         this.id = invoice.getId();
         this.userId = invoice.getUser() != null ? invoice.getUser().getId() : null;
+        this.user = invoice.getUser() != null ? new UserDTO(invoice.getUser()) : null;
         this.date = invoice.getDate();
         this.total = invoice.getTotal();
         this.status = invoice.getStatus();
@@ -75,6 +80,14 @@ public class InvoiceDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
     public LocalDateTime getDate() {

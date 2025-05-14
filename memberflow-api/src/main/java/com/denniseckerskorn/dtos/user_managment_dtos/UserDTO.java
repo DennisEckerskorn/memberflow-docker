@@ -42,6 +42,19 @@ public class UserDTO {
         this.status = status;
     }
 
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.address = user.getAddress();
+        this.registerDate = user.getRegisterDate();
+        this.roleName = user.getRole() != null ? user.getRole().getName() : null;
+        this.status = user.getStatus();
+    }
+
+
     // Getters y Setters
     public Integer getId() {
         return id;
