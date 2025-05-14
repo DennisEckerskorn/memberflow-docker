@@ -24,6 +24,8 @@ import MembershipForm from '../forms/MembershipCreateForm';
 import MembershipList from '../lists/MembershipList';
 import InvoiceForm from '../forms/InvoiceForm';
 import InvoiceList from '../lists/InvoiceList';
+import PaymentForm from '../forms/PaymentForm';
+import PaymentList from '../lists/PaymentList';
 import '../styles/MainLayout.css';
 
 
@@ -69,6 +71,10 @@ const MainLayout = () => {
 
             <Route path="/admin/finance/invoices/create" element={<InvoiceForm />} />
             <Route path="/admin/finance/invoices/list" element={<InvoiceList />} />
+            <Route path="/admin/finance/payments/create" element={<PaymentForm />} />
+            <Route path="/admin/finance/payments/list" element={<PaymentList />} />
+
+
 
             {/* Profile Page*/}
             <Route path="/profile" element={<ProfilePage />} />

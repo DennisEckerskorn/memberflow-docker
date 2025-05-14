@@ -62,4 +62,13 @@ public class PaymentController {
         paymentService.removePayment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/getAllByUserId/{userId}")
+    @Operation(summary = "Get all payments by user ID")
+    public ResponseEntity<List<PaymentDTO>> getAllByUserId(@PathVariable Integer userId) {
+        List<PaymentDTO> dtos = paymentService.findAllByUserId(userId)
+                .stream().map(PaymentDTO::new).collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
 }

@@ -29,9 +29,6 @@ class PaymentServiceTest {
     @Mock
     private InvoiceService invoiceService;
 
-    @Mock
-    private EntityManager entityManager;
-
     @InjectMocks
     private PaymentService paymentService;
 
@@ -44,59 +41,64 @@ class PaymentServiceTest {
 
         invoice = new Invoice();
         invoice.setId(1);
-        invoice.setTotal(new BigDecimal("59.99"));
+        invoice.setTotal(new BigDecimal("140.00"));
         invoice.setStatus(StatusValues.NOT_PAID);
 
         payment = new Payment();
         payment.setId(101);
         payment.setInvoice(invoice);
-        payment.setAmount(new BigDecimal("59.99"));
+        payment.setAmount(new BigDecimal("140.00"));
         payment.setPaymentDate(LocalDateTime.now().minusDays(1));
-        payment.setPaymentMethod(PaymentMethodValues.CREDIT_CARD);
+        payment.setPaymentMethod(PaymentMethodValues.CASH);
         payment.setStatus(StatusValues.PAID);
-
-        Field emField = PaymentService.class.getSuperclass().getDeclaredField("entityManager");
-        emField.setAccessible(true);
-        emField.set(paymentService, entityManager);
     }
 
     @Test
     void save_ShouldUpdateInvoiceStatusAndSavePayment() {
         when(paymentRepository.existsByInvoiceId(1)).thenReturn(false);
+        when(invoiceService.findById(1)).thenReturn(invoice);
         when(paymentRepository.save(any())).thenReturn(payment);
 
         Payment saved = paymentService.save(payment);
-        assertEquals(StatusValues.PAID, payment.getInvoice().getStatus());
+
+        assertEquals(StatusValues.PAID, saved.getInvoice().getStatus());
         verify(invoiceService).update(invoice);
+        verify(paymentRepository).save(payment);
     }
 
     @Test
-    void save_DuplicatePayment_ShouldThrow() {
+    void save_WhenDuplicate_ShouldThrow() {
         when(paymentRepository.existsByInvoiceId(1)).thenReturn(true);
+
         assertThrows(DuplicateEntityException.class, () -> paymentService.save(payment));
+        verify(invoiceService, never()).update(any());
     }
 
     @Test
-    void save_InvalidAmount_ShouldThrow() {
-        payment.setAmount(BigDecimal.ZERO);
-        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
-    }
-
-    @Test
-    void save_InvalidPaymentDate_ShouldThrow() {
-        payment.setPaymentDate(LocalDateTime.now().plusDays(1));
-        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
-    }
-
-    @Test
-    void save_InvalidMethod_ShouldThrow() {
-        payment.setPaymentMethod(null);
-        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
-    }
-
-    @Test
-    void save_InvoiceNull_ShouldThrow() {
+    void save_WhenInvoiceNull_ShouldThrow() {
         payment.setInvoice(null);
+
+        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
+    }
+
+    @Test
+    void save_WhenInvalidAmount_ShouldThrow() {
+        payment.setAmount(BigDecimal.ZERO);
+
+        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
+    }
+
+    @Test
+    void save_WhenFutureDate_ShouldThrow() {
+        payment.setPaymentDate(LocalDateTime.now().plusDays(1));
+
+        assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
+    }
+
+    @Test
+    void save_WhenMissingMethod_ShouldThrow() {
+        payment.setPaymentMethod(null);
+
         assertThrows(InvalidDataException.class, () -> paymentService.save(payment));
     }
 }

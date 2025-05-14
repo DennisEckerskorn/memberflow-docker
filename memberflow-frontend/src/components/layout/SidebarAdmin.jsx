@@ -39,7 +39,8 @@ const SidebarAdmin = () => {
           <h4>💵 Finanzas</h4>
           <button onClick={() => navigate('/admin/finance/invoices/create')}>🧾 Crear Factura</button>
           <button onClick={() => navigate('/admin/finance/invoices/list')}>📄 Ver Facturas</button>
-          <button onClick={() => navigate('/admin/finance/payments/create')}>💳 Nuevo Pago</button>
+          <button onClick={() => navigate('/admin/finance/payments/create')}>📄 Nuevo Pago</button>
+          <button onClick={() => navigate('/admin/finance/payments/list')}>💳 Facturas Pagadas</button>
           <button onClick={() => navigate('/admin/finance/products/create')}>🛒 Añadir Productos</button>
           <button onClick={() => navigate('/admin/finance/products/list')}>📦 Ver Productos</button>
           <button onClick={() => navigate('/admin/finance/ivatypes/create')}>💱 Añadir Tipo de IVA</button>

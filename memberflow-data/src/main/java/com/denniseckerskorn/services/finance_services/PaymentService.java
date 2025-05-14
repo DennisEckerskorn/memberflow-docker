@@ -8,7 +8,6 @@ import com.denniseckerskorn.exceptions.EntityNotFoundException;
 import com.denniseckerskorn.exceptions.InvalidDataException;
 import com.denniseckerskorn.repositories.finance_repositories.PaymentRepository;
 import com.denniseckerskorn.services.AbstractService;
-import com.denniseckerskorn.services.finance_services.InvoiceService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +32,28 @@ public class PaymentService extends AbstractService<Payment, Integer> {
 
     @Override
     @Transactional
-    public Payment save(Payment entity) throws DuplicateEntityException {
-        logger.info("Saving payment: {}", entity);
-        validate(entity);
-        if (paymentRepository.existsByInvoiceId(entity.getInvoice().getId())) {
+    public Payment save(Payment payment) throws DuplicateEntityException {
+        logger.info("Saving payment: {}", payment);
+        validate(payment);
+
+        Integer invoiceId = payment.getInvoice().getId();
+        if (paymentRepository.existsByInvoiceId(invoiceId)) {
             throw new DuplicateEntityException("A payment already exists for this invoice");
         }
-        updateInvoiceStatus(entity);
-        return super.save(entity);
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        if (invoice == null) {
+            throw new EntityNotFoundException("Invoice not found");
+        }
+
+        payment.setInvoice(invoice);
+        invoice.setPayment(payment);
+
+        invoice.setStatus(StatusValues.PAID);
+        invoiceService.update(invoice);
+        return super.save(payment);
     }
+
 
     @Override
     public Payment update(Payment entity) throws EntityNotFoundException, InvalidDataException {
@@ -98,6 +110,10 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         super.deleteById(paymentId);
         invoice.setStatus(StatusValues.NOT_PAID);
         invoiceService.update(invoice);
+    }
+
+    public List<Payment> findAllByUserId(Integer userId) {
+        return paymentRepository.findByInvoice_User_Id(userId);
     }
 
 }
