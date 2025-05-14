@@ -1,17 +1,26 @@
 package com.denniseckerskorn.controllers.finance_management;
 
 
+import com.denniseckerskorn.dtos.finance_management_dtos.CreateInvoiceLineDTO;
+import com.denniseckerskorn.dtos.finance_management_dtos.CreateInvoiceRequestDTO;
 import com.denniseckerskorn.dtos.finance_management_dtos.InvoiceDTO;
 import com.denniseckerskorn.entities.finance.Invoice;
 import com.denniseckerskorn.entities.finance.InvoiceLine;
+import com.denniseckerskorn.entities.finance.ProductService;
+import com.denniseckerskorn.entities.user_managment.users.User;
 import com.denniseckerskorn.exceptions.DuplicateEntityException;
 import com.denniseckerskorn.exceptions.EntityNotFoundException;
 import com.denniseckerskorn.exceptions.InvalidDataException;
+import com.denniseckerskorn.services.finance_service.InvoicePdfGenerator;
 import com.denniseckerskorn.services.finance_services.InvoiceService;
+import com.denniseckerskorn.services.finance_services.ProductServiceService;
+import com.denniseckerskorn.services.user_managment_services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +33,55 @@ import java.util.stream.Collectors;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final UserService userService;
+    private final ProductServiceService productServiceService;
+    private final InvoicePdfGenerator invoicePdfGenerator;
 
-    public InvoiceController(InvoiceService invoiceService) {
+    public InvoiceController(InvoiceService invoiceService, UserService userService, ProductServiceService productServiceService, InvoicePdfGenerator invoicePdfGenerator) {
         this.invoiceService = invoiceService;
+        this.userService = userService;
+        this.productServiceService = productServiceService;
+        this.invoicePdfGenerator = invoicePdfGenerator;
     }
+
+    @PostMapping("/createInvoiceWithLines")
+    @Operation(summary = "Create a new invoice with lines")
+    public ResponseEntity<InvoiceDTO> createInvoiceWithLines(@Valid @RequestBody CreateInvoiceRequestDTO dto) throws EntityNotFoundException, InvalidDataException {
+        User user = userService.findById(dto.getUserId());
+        if (user == null) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        Invoice invoice = dto.toEntity(user);
+        invoiceService.save(invoice);
+
+        if (dto.getLines() != null && !dto.getLines().isEmpty()) {
+            for (CreateInvoiceLineDTO lineDTO : dto.getLines()) {
+                ProductService product = productServiceService.findById(lineDTO.getProductServiceId());
+                if (product == null) {
+                    throw new EntityNotFoundException("Product/Service not found");
+                }
+                InvoiceLine line = lineDTO.toEntity(invoice, product);
+                invoiceService.addLineToInvoiceById(invoice.getId(), line);
+            }
+        }
+        invoiceService.recalculateTotal(invoice);
+        return new ResponseEntity<>(new InvoiceDTO(invoice), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/generatePDFById/{id}")
+    @Operation(summary = "Generar y descargar factura en PDF")
+    public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Integer id) throws EntityNotFoundException {
+        Invoice invoice = invoiceService.findById(id);
+
+        byte[] pdf = invoicePdfGenerator.generateInvoicePdf(invoice);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=factura_" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
 
     @PostMapping("/create")
     @Operation(summary = "Create a new invoice")

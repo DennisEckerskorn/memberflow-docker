@@ -15,7 +15,7 @@ const SidebarAdmin = () => {
         <div className="submenu">
           <h4>👥 Administración de Usuarios</h4>
           <button onClick={() => navigate('/admin/user-management/users/create')}>➕ Crear Usuario</button>
-          <button onClick={() => navigate('/admin/user-management/users/list')}>📋 Ve Usuarios</button>
+          <button onClick={() => navigate('/admin/user-management/users/list')}>📋 Ver Usuarios</button>
           <button onClick={() => navigate('/admin/user-management/notifications/create')}>🔔 Crear Notificación</button>
           <button onClick={() => navigate('/admin/user-management/notifications/list')}>📨 Ver Notificaciones</button>
           <button onClick={() => navigate('/admin/user-management/student-history/create')}>🕒 Crear Historial</button>
