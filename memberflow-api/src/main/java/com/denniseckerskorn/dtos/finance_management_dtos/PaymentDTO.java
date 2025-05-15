@@ -1,5 +1,6 @@
 package com.denniseckerskorn.dtos.finance_management_dtos;
 
+import com.denniseckerskorn.entities.finance.Invoice;
 import com.denniseckerskorn.entities.finance.Payment;
 import com.denniseckerskorn.enums.PaymentMethodValues;
 import com.denniseckerskorn.enums.StatusValues;
@@ -27,7 +28,8 @@ public class PaymentDTO {
     @NotNull
     private StatusValues status;
 
-    public PaymentDTO() {}
+    public PaymentDTO() {
+    }
 
     public PaymentDTO(Payment entity) {
         this.id = entity.getId();
@@ -44,6 +46,9 @@ public class PaymentDTO {
 
     public Payment toEntity() {
         Payment payment = new Payment();
+        if (this.id != null) {
+            payment.setId(this.id);
+        }
         payment.setId(this.id);
         payment.setPaymentDate(this.paymentDate);
         payment.setAmount(this.amount);
@@ -51,6 +56,17 @@ public class PaymentDTO {
         payment.setStatus(this.status);
         return payment;
     }
+
+    public Payment toEntityWithInvoice(Invoice invoice) {
+        Payment payment = new Payment();
+        payment.setPaymentDate(this.paymentDate);
+        payment.setAmount(this.amount);
+        payment.setPaymentMethod(this.paymentMethod);
+        payment.setStatus(this.status);
+        payment.setInvoice(invoice);
+        return payment;
+    }
+
 
     // Getters y setters...
 

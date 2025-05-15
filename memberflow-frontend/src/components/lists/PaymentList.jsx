@@ -48,7 +48,7 @@ const PaymentList = () => {
   return (
     <div className="content-area">
       <div className="card">
-        <h2>Listado de Pagos</h2>
+        <h2>Listado de Facturas Pagadas por Estudiante</h2>
 
         <label>Seleccionar estudiante:</label>
         <select className="form-select" value={selectedUserId} onChange={handleStudentChange}>

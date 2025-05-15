@@ -20,7 +20,9 @@ const PaymentForm = () => {
   const fetchInvoices = async (userId) => {
     try {
       const res = await api.get(`/invoices/getAllInvoicesByUserId/${userId}`);
-      const notPaid = res.data.filter((invoice) => invoice.status === "NOT_PAID");
+      const notPaid = res.data.filter(
+        (invoice) => invoice.status === "NOT_PAID"
+      );
       setInvoices(notPaid);
     } catch (err) {
       console.error(err);
@@ -48,6 +50,19 @@ const PaymentForm = () => {
       return;
     }
 
+    const selectedInvoice = invoices.find(
+      (inv) => inv.id === parseInt(selectedInvoiceId)
+    );
+    if (!selectedInvoice) {
+      setError("Factura no encontrada.");
+      return;
+    }
+
+    if (parseFloat(amount) < selectedInvoice.total) {
+      setError("El importe pagado no puede ser menor al total de la factura.");
+      return;
+    }
+
     try {
       await api.post("/payments/create", {
         invoiceId: parseInt(selectedInvoiceId),
@@ -61,7 +76,7 @@ const PaymentForm = () => {
       setSelectedInvoiceId("");
       setAmount("");
       setPaymentMethod("CASH");
-      fetchInvoices(selectedUserId); // actualizar facturas pendientes
+      fetchInvoices(selectedUserId);
     } catch (err) {
       console.error(err);
       setError("❌ Error al registrar el pago.");
@@ -71,10 +86,14 @@ const PaymentForm = () => {
   return (
     <div className="content-area">
       <div className="card">
-        <h2>Registrar Pago</h2>
+        <h2>Registrar Pago de una Factura</h2>
 
         <label>Seleccionar estudiante:</label>
-        <select className="form-select" value={selectedUserId} onChange={handleStudentChange}>
+        <select
+          className="form-select"
+          value={selectedUserId}
+          onChange={handleStudentChange}
+        >
           <option value="">-- Selecciona un estudiante --</option>
           {students.map((s) =>
             s.user ? (
@@ -96,11 +115,18 @@ const PaymentForm = () => {
               <option value="">-- Selecciona una factura --</option>
               {invoices.map((inv) => (
                 <option key={inv.id} value={inv.id}>
-                  #{inv.id} - {new Date(inv.date).toLocaleDateString()} - Total: {inv.total.toFixed(2)} €
+                  #{inv.id} - {new Date(inv.date).toLocaleDateString()} - Total:{" "}
+                  {inv.total.toFixed(2)} €
                 </option>
               ))}
             </select>
           </>
+        )}
+
+        {invoices.length === 0 && selectedUserId && (
+          <p style={{ marginTop: "1rem", color: "gray" }}>
+            No hay facturas pendientes de pago para este estudiante.
+          </p>
         )}
 
         {selectedInvoiceId && (
@@ -121,15 +147,18 @@ const PaymentForm = () => {
               onChange={(e) => setPaymentMethod(e.target.value)}
             >
               <option value="CASH">Efectivo</option>
-              <option value="CARD">Tarjeta</option>
-              <option value="TRANSFER">Transferencia</option>
-              <option value="BIZUM">Bizum</option>
+              <option value="CREDIT_CARD">Tarjeta</option>
+              <option value="BANK_TRANSFER">Transferencia</option>
             </select>
 
             <ErrorMessage message={error} type="error" />
             <ErrorMessage message={success} type="success" />
 
-            <button className="btn btn-primary" style={{ marginTop: "1rem" }} onClick={handleSubmit}>
+            <button
+              className="btn btn-primary"
+              style={{ marginTop: "1rem" }}
+              onClick={handleSubmit}
+            >
               💳 Confirmar Pago
             </button>
           </>

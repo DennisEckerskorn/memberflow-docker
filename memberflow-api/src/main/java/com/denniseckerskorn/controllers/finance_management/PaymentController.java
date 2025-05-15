@@ -1,6 +1,7 @@
 package com.denniseckerskorn.controllers.finance_management;
 
 import com.denniseckerskorn.dtos.finance_management_dtos.PaymentDTO;
+import com.denniseckerskorn.entities.finance.Invoice;
 import com.denniseckerskorn.entities.finance.Payment;
 import com.denniseckerskorn.exceptions.DuplicateEntityException;
 import com.denniseckerskorn.exceptions.EntityNotFoundException;
@@ -29,17 +30,27 @@ public class PaymentController {
 
     @PostMapping("/create")
     @Operation(summary = "Create a new payment and mark invoice as PAID")
-    public ResponseEntity<PaymentDTO> create(@Valid @RequestBody PaymentDTO dto) throws DuplicateEntityException {
-        Payment saved = paymentService.save(dto.toEntity());
+    public ResponseEntity<PaymentDTO> create(@Valid @RequestBody PaymentDTO dto)
+            throws DuplicateEntityException, EntityNotFoundException {
+
+        Invoice invoice = paymentService.getInvoiceById(dto.getInvoiceId());
+        Payment saved = paymentService.save(dto.toEntityWithInvoice(invoice));
+
         return new ResponseEntity<>(new PaymentDTO(saved), HttpStatus.CREATED);
     }
 
+
     @PutMapping("/update")
     @Operation(summary = "Update an existing payment and adjust invoice status")
-    public ResponseEntity<PaymentDTO> update(@Valid @RequestBody PaymentDTO dto) throws EntityNotFoundException, InvalidDataException {
-        Payment updated = paymentService.update(dto.toEntity());
+    public ResponseEntity<PaymentDTO> update(@Valid @RequestBody PaymentDTO dto)
+            throws EntityNotFoundException, InvalidDataException {
+
+        Invoice invoice = paymentService.getInvoiceById(dto.getInvoiceId());
+        Payment updated = paymentService.update(dto.toEntityWithInvoice(invoice));
+
         return new ResponseEntity<>(new PaymentDTO(updated), HttpStatus.OK);
     }
+
 
     @GetMapping("/getById/{id}")
     @Operation(summary = "Get payment by ID")

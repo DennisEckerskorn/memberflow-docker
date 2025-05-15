@@ -47,15 +47,20 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         }
 
         payment.setInvoice(invoice);
-        invoice.setPayment(payment);
 
+        Payment savedPayment = super.save(payment);
+
+        invoice.setPayment(savedPayment);
         invoice.setStatus(StatusValues.PAID);
         invoiceService.update(invoice);
-        return super.save(payment);
+
+        return savedPayment;
     }
 
 
+
     @Override
+    @Transactional
     public Payment update(Payment entity) throws EntityNotFoundException, InvalidDataException {
         logger.info("Updating payment: {}", entity);
         validate(entity);
@@ -97,6 +102,7 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         }
     }
 
+    @Transactional
     private void updateInvoiceStatus(Payment payment) {
         Invoice invoice = payment.getInvoice();
         invoice.setStatus(StatusValues.PAID);
@@ -115,5 +121,10 @@ public class PaymentService extends AbstractService<Payment, Integer> {
     public List<Payment> findAllByUserId(Integer userId) {
         return paymentRepository.findByInvoice_User_Id(userId);
     }
+
+    public Invoice getInvoiceById(Integer id) {
+        return invoiceService.findById(id);
+    }
+
 
 }
