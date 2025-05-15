@@ -1,10 +1,12 @@
 package com.denniseckerskorn.controllers.finance_management;
 
 import com.denniseckerskorn.dtos.finance_management_dtos.ProductServiceDTO;
+import com.denniseckerskorn.entities.finance.IVAType;
 import com.denniseckerskorn.entities.finance.ProductService;
 import com.denniseckerskorn.exceptions.DuplicateEntityException;
 import com.denniseckerskorn.exceptions.EntityNotFoundException;
 import com.denniseckerskorn.exceptions.InvalidDataException;
+import com.denniseckerskorn.services.finance_services.IVATypeService;
 import com.denniseckerskorn.services.finance_services.ProductServiceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,24 +24,29 @@ import java.util.stream.Collectors;
 public class ProductServiceController {
 
     private final ProductServiceService productServiceService;
+    private final IVATypeService ivaTypeService;
 
-    public ProductServiceController(ProductServiceService productServiceService) {
+    public ProductServiceController(ProductServiceService productServiceService, IVATypeService ivaTypeService) {
         this.productServiceService = productServiceService;
+        this.ivaTypeService = ivaTypeService;
     }
 
     @PostMapping("/create")
     @Operation(summary = "Create a new product/service")
     public ResponseEntity<ProductServiceDTO> create(@Valid @RequestBody ProductServiceDTO dto) throws DuplicateEntityException {
-        ProductService saved = productServiceService.save(dto.toEntity());
+        IVAType ivaType = ivaTypeService.findById(dto.getIvaTypeId());
+        ProductService saved = productServiceService.save(dto.toEntityWithIVA(ivaType));
         return new ResponseEntity<>(new ProductServiceDTO(saved), HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     @Operation(summary = "Update an existing product/service")
     public ResponseEntity<ProductServiceDTO> update(@Valid @RequestBody ProductServiceDTO dto) throws EntityNotFoundException, InvalidDataException {
-        ProductService updated = productServiceService.update(dto.toEntity());
+        IVAType ivaType = ivaTypeService.findById(dto.getIvaTypeId());
+        ProductService updated = productServiceService.update(dto.toEntityWithIVA(ivaType));
         return new ResponseEntity<>(new ProductServiceDTO(updated), HttpStatus.OK);
     }
+
 
     @GetMapping("/getById/{id}")
     @Operation(summary = "Get product/service by ID")

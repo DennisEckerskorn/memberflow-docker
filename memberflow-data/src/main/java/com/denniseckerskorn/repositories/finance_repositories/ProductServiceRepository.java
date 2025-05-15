@@ -7,4 +7,6 @@ public interface ProductServiceRepository extends JpaRepository<ProductService, 
     boolean existsByName(String name);
 
     boolean existsByIvaTypeId(Integer ivaTypeId);
+
+    ProductService findByName(String name);
 }

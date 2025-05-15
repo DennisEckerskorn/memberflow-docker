@@ -1,5 +1,6 @@
 package com.denniseckerskorn.dtos.finance_management_dtos;
 
+import com.denniseckerskorn.entities.finance.IVAType;
 import com.denniseckerskorn.entities.finance.ProductService;
 import com.denniseckerskorn.enums.StatusValues;
 import jakarta.validation.constraints.NotNull;
@@ -53,6 +54,18 @@ public class ProductServiceDTO {
         ps.setStatus(this.status);
         return ps;
     }
+
+    public ProductService toEntityWithIVA(IVAType ivaType) {
+        ProductService entity = new ProductService();
+        entity.setId(this.id);
+        entity.setName(this.name);
+        entity.setPrice(this.price);
+        entity.setType(this.type);
+        entity.setStatus(this.status);
+        entity.setIvaType(ivaType);
+        return entity;
+    }
+
 
     // Getters y setters...
 
