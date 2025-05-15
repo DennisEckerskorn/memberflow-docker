@@ -131,10 +131,23 @@ public class InvoiceService extends AbstractService<Invoice, Integer> {
     }
 
     public void updateInvoiceTotal(Invoice invoice) {
-        BigDecimal total = invoice.getInvoiceLines().stream()
-                .map(InvoiceLine::getSubtotal)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (InvoiceLine line : invoice.getInvoiceLines()) {
+            if (line.getUnitPrice() != null && line.getQuantity() != null) {
+                BigDecimal quantity = BigDecimal.valueOf(line.getQuantity());
+                BigDecimal base = line.getUnitPrice().multiply(quantity);
+
+                BigDecimal ivaMultiplier = BigDecimal.ONE;
+                if (line.getProductService() != null && line.getProductService().getIvaType() != null) {
+                    BigDecimal iva = line.getProductService().getIvaType().getPercentage();
+                    ivaMultiplier = ivaMultiplier.add(iva.divide(BigDecimal.valueOf(100)));
+                }
+
+                BigDecimal lineTotal = base.multiply(ivaMultiplier);
+                total = total.add(lineTotal);
+            }
+        }
 
         invoice.setTotal(total);
     }

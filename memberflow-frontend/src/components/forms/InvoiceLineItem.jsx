@@ -1,5 +1,3 @@
-// src/components/forms/InvoiceLineItem.jsx
-
 import React from 'react';
 
 const InvoiceLineItem = ({ index, line, products, onUpdate, onRemove }) => {
@@ -8,6 +6,10 @@ const InvoiceLineItem = ({ index, line, products, onUpdate, onRemove }) => {
   };
 
   const selectedProduct = products.find(p => p.id === parseInt(line.productServiceId));
+  const quantity = parseInt(line.quantity) || 1;
+  const price = selectedProduct?.price || 0;
+  const ivaPercentage = selectedProduct?.ivaType?.percentage || 0;
+  const totalConIVA = price * quantity * (1 + ivaPercentage / 100);
 
   return (
     <div className="content-area" style={{ marginBottom: "1rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -36,9 +38,14 @@ const InvoiceLineItem = ({ index, line, products, onUpdate, onRemove }) => {
       />
 
       {selectedProduct && (
-        <div style={{ fontSize: '0.9rem', color: '#666' }}>
-          <strong>{selectedProduct.name}</strong>: {selectedProduct.description}
-        </div>
+        <>
+          <div style={{ fontSize: '0.9rem', color: '#666' }}>
+            <strong>{selectedProduct.name}</strong>: {selectedProduct.description}
+          </div>
+          <div style={{ fontSize: '0.9rem', color: '#333' }}>
+            <strong>Total con IVA:</strong> {totalConIVA.toFixed(2)} €
+          </div>
+        </>
       )}
 
       <button className="btn btn-danger" onClick={() => onRemove(index)}>Eliminar producto</button>

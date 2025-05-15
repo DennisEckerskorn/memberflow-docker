@@ -10,7 +10,7 @@ const InvoiceForm = () => {
   const [lines, setLines] = useState([]);
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
-  const [createdInvoiceId, setCreatedInvoiceId] = useState(null);
+  const [createdInvoice, setCreatedInvoice] = useState(null);
 
   useEffect(() => {
     api.get("/students/getAll").then((res) => setStudents(res.data));
@@ -31,19 +31,31 @@ const InvoiceForm = () => {
     setLines(lines.filter((_, i) => i !== index));
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return lines.reduce((acc, line) => {
-      const product = products.find(
-        (p) => p.id === parseInt(line.productServiceId)
-      );
+      const product = products.find((p) => p.id === parseInt(line.productServiceId));
       if (!product) return acc;
-      return acc + product.price * line.quantity;
+      return acc + product.price * (parseInt(line.quantity) || 1);
     }, 0);
+  };
+
+  const calculateIVA = () => {
+    return lines.reduce((acc, line) => {
+      const product = products.find((p) => p.id === parseInt(line.productServiceId));
+      if (!product || !product.ivaType) return acc;
+      const quantity = parseInt(line.quantity) || 1;
+      const iva = product.ivaType.percentage || 0;
+      return acc + (product.price * quantity * (iva / 100));
+    }, 0);
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateIVA();
   };
 
   const createInvoice = async () => {
     setError("");
-    setCreatedInvoiceId(null);
+    setCreatedInvoice(null);
 
     if (!userId || lines.length === 0) {
       setError("Selecciona un estudiante y al menos un producto.");
@@ -52,9 +64,7 @@ const InvoiceForm = () => {
 
     try {
       const preparedLines = lines.map((line) => {
-        const product = products.find(
-          (p) => p.id === parseInt(line.productServiceId)
-        );
+        const product = products.find((p) => p.id === parseInt(line.productServiceId));
         return {
           productServiceId: parseInt(line.productServiceId),
           quantity: parseInt(line.quantity),
@@ -71,9 +81,7 @@ const InvoiceForm = () => {
       };
 
       const res = await api.post("/invoices/createInvoiceWithLines", payload);
-      const invoiceId = res.data.id;
-
-      setCreatedInvoiceId(invoiceId);
+      setCreatedInvoice(res.data);
       alert("✅ Factura creada correctamente.");
     } catch (err) {
       console.error(err);
@@ -83,14 +91,14 @@ const InvoiceForm = () => {
 
   const downloadPdf = async () => {
     try {
-      const response = await api.get(`/invoices/generatePDFById/${createdInvoiceId}`, {
-        responseType: "blob", // para recibir el PDF correctamente
+      const response = await api.get(`/invoices/generatePDFById/${createdInvoice.id}`, {
+        responseType: "blob",
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `factura_${createdInvoiceId}.pdf`);
+      link.setAttribute("download", `factura_${createdInvoice.id}.pdf`);
       document.body.appendChild(link);
       link.click();
     } catch (err) {
@@ -141,9 +149,11 @@ const InvoiceForm = () => {
           />
         ))}
 
-        <h4 style={{ marginTop: "1rem" }}>
-          Total: <strong>{calculateTotal().toFixed(2)} €</strong>
-        </h4>
+        <div style={{ marginTop: "1rem" }}>
+          <h4>Subtotal: <strong>{calculateSubtotal().toFixed(2)} €</strong></h4>
+          <h4>IVA: <strong>{calculateIVA().toFixed(2)} €</strong></h4>
+          <h4>Total estimado con IVA: <strong>{calculateTotal().toFixed(2)} €</strong></h4>
+        </div>
 
         <ErrorMessage message={error} />
 
@@ -160,9 +170,10 @@ const InvoiceForm = () => {
           </button>
         </div>
 
-        {createdInvoiceId && (
+        {createdInvoice && (
           <div style={{ marginTop: "2rem" }}>
-            <h4>Factura creada: #{createdInvoiceId}</h4>
+            <h4>Factura creada: #{createdInvoice.id}</h4>
+            <h4>Total con IVA: <strong>{createdInvoice.total.toFixed(2)} €</strong></h4>
             <button className="btn btn-primary" onClick={downloadPdf}>
               📄 Descargar PDF
             </button>

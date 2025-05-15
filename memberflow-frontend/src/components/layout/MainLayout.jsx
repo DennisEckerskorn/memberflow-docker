@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Topbar from './Topbar';
 import Sidebar from './Sidebar';
-import ContentArea from './ContentArea';
 import AdminDashboard from '../../pages/admin/AdminDashboard';
 import TeacherDashboard from '../../pages/teacher/TeacherDashboard';
 import StudentDashboard from '../../pages/student/StudentDashboard';
@@ -11,7 +10,7 @@ import UserList from '../../components/lists/UserList';
 import NotificationCreateForm from '../../components/forms/NotificationCreateForm';
 import StudentHistoryCreateForm from '../../components/forms/StudentHistoryCreateForm';
 import StudentHistoryList from '../../components/lists/StudentHistoryList';
-import ProfilePage from '../../pages/ProfilePage'
+import ProfilePage from '../../pages/ProfilePage';
 import NotificationList from '../../components/lists/NotificationList';
 import TrainingGroupForm from '../forms/TrainingGroupFrom';
 import TrainingGroupList from '../lists/TrainingGroupList';
@@ -28,8 +27,8 @@ import PaymentForm from '../forms/PaymentForm';
 import PaymentList from '../lists/PaymentList';
 import ProductForm from '../forms/ProductForm';
 import ProductList from '../lists/ProductList';
+import IVATypeManager from '../forms/IVATypeManager';
 import '../styles/MainLayout.css';
-
 
 const MainLayout = () => {
   return (
@@ -40,27 +39,20 @@ const MainLayout = () => {
 
         <div className="content-area">
           <Routes>
-            {/* Dashboards principales */}
+            {/* Dashboards */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
 
-            {/* User Management - rutas específicas */}
+            {/* User Management */}
             <Route path="/admin/user-management/users/create" element={<UserCreateForm />} />
             <Route path="/admin/user-management/users/list" element={<UserList />} />
             <Route path="/admin/user-management/notifications/create" element={<NotificationCreateForm />} />
             <Route path="/admin/user-management/notifications/list" element={<NotificationList />} />
-
-            {/* Student History */}
             <Route path="/admin/user-management/student-history/create" element={<StudentHistoryCreateForm />} />
             <Route path="/admin/user-management/student-history/list" element={<StudentHistoryList />} />
 
-            {/* ContentArea general para secciones sin componentes específicos */}
-            <Route path="/admin/user-management/*" element={<ContentArea />} />
-            <Route path="/admin/class-management/*" element={<ContentArea />} />
-            <Route path="/admin/finance/*" element={<ContentArea />} />
-
-            {/*Class Management - rutas específicas*/}
+            {/* Class Management */}
             <Route path="/admin/class-management/training-groups/create" element={<TrainingGroupForm />} />
             <Route path="/admin/class-management/training-groups/list" element={<TrainingGroupList />} />
             <Route path="/admin/class-management/training-groups/manage-students" element={<TrainingGroupStudentManager />} />
@@ -71,19 +63,17 @@ const MainLayout = () => {
             <Route path="/admin/class-management/memberships/create" element={<MembershipForm />} />
             <Route path="/admin/class-management/memberships/list" element={<MembershipList />} />
 
+            {/* Finance */}
             <Route path="/admin/finance/invoices/create" element={<InvoiceForm />} />
             <Route path="/admin/finance/invoices/list" element={<InvoiceList />} />
             <Route path="/admin/finance/payments/create" element={<PaymentForm />} />
             <Route path="/admin/finance/payments/list" element={<PaymentList />} />
             <Route path="/admin/finance/products/create" element={<ProductForm />} />
             <Route path="/admin/finance/products/list" element={<ProductList />} />
+            <Route path="/admin/finance/ivatypes/create" element={<IVATypeManager />} />
 
-
-
-
-            {/* Profile Page*/}
+            {/* Perfil */}
             <Route path="/profile" element={<ProfilePage />} />
-
           </Routes>
         </div>
       </div>

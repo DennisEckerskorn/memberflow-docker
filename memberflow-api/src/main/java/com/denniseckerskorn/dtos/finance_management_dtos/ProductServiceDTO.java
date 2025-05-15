@@ -14,6 +14,8 @@ public class ProductServiceDTO {
     @NotNull
     private Integer ivaTypeId;
 
+    private IVATypeDTO ivaType;
+
     @NotNull
     private String name;
 
@@ -28,11 +30,13 @@ public class ProductServiceDTO {
     @NotNull
     private StatusValues status;
 
-    public ProductServiceDTO() {}
+    public ProductServiceDTO() {
+    }
 
     public ProductServiceDTO(ProductService entity) {
         this.id = entity.getId();
         this.ivaTypeId = entity.getIvaType() != null ? entity.getIvaType().getId() : null;
+        this.ivaType = entity.getIvaType() != null ? new IVATypeDTO(entity.getIvaType()) : null;
         this.name = entity.getName();
         this.description = entity.getDescription();
         this.price = entity.getPrice();
@@ -66,9 +70,7 @@ public class ProductServiceDTO {
         return entity;
     }
 
-
-    // Getters y setters...
-
+    // Getters y setters
 
     public Integer getId() {
         return id;
@@ -84,6 +86,14 @@ public class ProductServiceDTO {
 
     public void setIvaTypeId(Integer ivaTypeId) {
         this.ivaTypeId = ivaTypeId;
+    }
+
+    public IVATypeDTO getIvaType() {
+        return ivaType;
+    }
+
+    public void setIvaType(IVATypeDTO ivaType) {
+        this.ivaType = ivaType;
     }
 
     public String getName() {
