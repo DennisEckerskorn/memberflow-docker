@@ -24,7 +24,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       onLoginSuccess();
     } catch (err) {
       console.error("Error al iniciar sesión:", err);
-      setError('Email o contraseña incorrectos');
+      setError('Correo electrónico o Contraseña son incorrectos');
     }
   };
 
@@ -32,18 +32,21 @@ const LoginForm = ({ onLoginSuccess }) => {
     <div className="login-wrapper">
       <div className="login-card">
         <h1>MemberFlow</h1>
+        <h2>Accede con tus credenciales</h2>
         <form onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Correo electrónico"
             value={email}
+            autoComplete="email"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             value={password}
+            autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             required
           />

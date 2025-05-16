@@ -70,7 +70,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/generatePDFById/{id}")
-    @Operation(summary = "Generar y descargar factura en PDF")
+    @Operation(summary = "Generate PDF for invoice by ID")
     public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Integer id) throws EntityNotFoundException {
         Invoice invoice = invoiceService.findById(id);
 
