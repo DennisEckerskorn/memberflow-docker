@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,7 +71,8 @@ public class NotificationController {
 
         Set<User> existingUsers = updated.getUsers();
         if (existingUsers != null) {
-            for (User user : existingUsers) {
+            List<User> clonedUsers = new ArrayList<>(existingUsers);
+            for (User user : clonedUsers) {
                 notificationService.removeNotificationFromUser(updated, user);
             }
         }
@@ -84,6 +86,7 @@ public class NotificationController {
 
         return ResponseEntity.ok(toDTO(updated));
     }
+
 
     @Operation(summary = "Delete a notification by ID", description = "Delete a notification by its ID")
     @DeleteMapping("/delete/{id}")

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 
+
 const IVATypeManager = () => {
   const [ivaTypes, setIvaTypes] = useState([]);
   const [newIva, setNewIva] = useState({ percentage: "", description: "" });

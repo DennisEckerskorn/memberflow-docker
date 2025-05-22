@@ -171,10 +171,8 @@ const UserCreateForm = () => {
   return (
     <div className="card">
       <h2>Crear nuevo usuario</h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-      >
+      <form onSubmit={handleSubmit} className="form-column">
+
         {/* Datos básicos */}
         <input
           type="text"
@@ -264,6 +262,7 @@ const UserCreateForm = () => {
             <input
               type="date"
               name="birthdate"
+              placeholder="Fecha de nacimiento"
               value={studentData.birthdate}
               onChange={handleChangeStudent}
               required

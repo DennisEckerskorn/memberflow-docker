@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
-import '../styles/FormStyles.css';
+import '../styles/ContentArea.css';
 
 const NotificationCreateForm = () => {
   const today = new Date().toISOString().split('T')[0];
@@ -82,7 +82,7 @@ const NotificationCreateForm = () => {
     <div className="card">
       <h2>Crear nueva notificación</h2>
 
-      <form onSubmit={handleSubmit} className="notification-form">
+      <form onSubmit={handleSubmit} className="form-column">
         <input type="text" name="title" placeholder="Título" value={notificationData.title} onChange={handleChange} required />
         <textarea name="message" placeholder="Mensaje" value={notificationData.message} onChange={handleChange} rows="4" required />
 
