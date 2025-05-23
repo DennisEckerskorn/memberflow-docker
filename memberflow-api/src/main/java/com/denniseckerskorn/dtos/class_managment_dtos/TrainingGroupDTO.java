@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ public class TrainingGroupDTO {
     private String level;
     private LocalDateTime schedule;
     private Integer teacherId;
-    private Set<Integer> studentIds;
+    private Set<Integer> studentIds = new HashSet<>();
 
     public TrainingGroupDTO() {
     }

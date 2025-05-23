@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 import "../styles/ContentArea.css";
+import "../styles/Timetable.css";
 
 const ViewTimetable = () => {
   const [groups, setGroups] = useState([]);
@@ -9,7 +10,7 @@ const ViewTimetable = () => {
     api.get("/training-groups/getAll").then((res) => setGroups(res.data));
   }, []);
 
-  const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const hours = [
     "07:00", "08:00", "09:00", "10:00", "11:00",
     "12:00", "13:00", "14:00", "15:00", "16:00",
@@ -19,38 +20,43 @@ const ViewTimetable = () => {
   return (
     <div className="card">
       <h2>Horario Semanal</h2>
-      <table className="styled-table" style={{ marginTop: "20px" }}>
-        <thead>
-          <tr>
-            <th>Hora</th>
-            {days.map((day) => (
-              <th key={day}>{day}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {hours.map((h) => (
-            <tr key={h}>
-              <td>{h}</td>
-              {days.map((_, dayIndex) => (
-                <td key={h + dayIndex}>
-                  {groups
-                    .filter((g) => {
-                      const date = new Date(g.schedule);
-                      return (
-                        date.getHours() === parseInt(h.split(":")[0]) &&
-                        date.getDay() === dayIndex
-                      );
-                    })
-                    .map((g) => (
-                      <div key={g.id}>{g.name} ({g.level})</div>
-                    ))}
-                </td>
+      <div className="timetable-wrapper">
+        <table className="styled-table timetable-table">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              {days.map((day) => (
+                <th key={day}>{day}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {hours.map((h) => (
+              <tr key={h}>
+                <td className="hour-label">{h}</td>
+                {days.map((_, dayIndex) => (
+                  <td key={h + dayIndex} className="day-cell">
+                    {groups
+                      .filter((g) => {
+                        const date = new Date(g.schedule);
+                        return (
+                          date.getHours() === parseInt(h.split(":")[0]) &&
+                          date.getDay() === dayIndex
+                        );
+                      })
+                      .map((g) => (
+                        <div key={g.id} className="timetable-block">
+                          <strong>{g.name}</strong>
+                          <div className="level-label">{g.level}</div>
+                        </div>
+                      ))}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

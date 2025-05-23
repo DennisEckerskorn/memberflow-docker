@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,27 +90,30 @@ public class TrainingGroupController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Update an existing training group", description = "Update an existing training group with the specified ID")
+    @Operation(summary = "Actualizar un grupo de entrenamiento existente", description = "Actualiza un grupo de entrenamiento por su ID")
     @Transactional
     @PutMapping("/update/{id}")
     public ResponseEntity<TrainingGroupDTO> update(@PathVariable Integer id, @RequestBody TrainingGroupDTO dto) {
         dto.setId(id);
+
         Teacher teacher = teacherService.findById(dto.getTeacherId());
-        Set<Student> students = dto.getStudentIds().stream()
+
+        Set<Integer> studentIds = dto.getStudentIds() != null ? dto.getStudentIds() : Collections.emptySet();
+
+        Set<Student> students = studentIds.stream()
                 .map(studentService::findById)
                 .collect(Collectors.toSet());
 
-        TrainingGroup updated = trainingGroupService.update(dto.toEntity(teacher, students));
+        TrainingGroup updatedGroup = trainingGroupService.update(dto.toEntity(teacher, students));
 
-        List<TrainingSession> sessions = updated.getTrainingSessions().stream().toList();
-        if (!sessions.isEmpty()) {
-            TrainingSession session = sessions.get(0);
-            session.setDate(updated.getSchedule());
+        updatedGroup.getTrainingSessions().stream().findFirst().ifPresent(session -> {
+            session.setDate(updatedGroup.getSchedule());
             trainingSessionService.save(session);
-        }
+        });
 
-        return ResponseEntity.ok(new TrainingGroupDTO(updated));
+        return ResponseEntity.ok(new TrainingGroupDTO(updatedGroup));
     }
+
 
     @Operation(summary = "Find a training group by ID", description = "Retrieve a training group with the specified ID")
     @GetMapping("findById/{id}")

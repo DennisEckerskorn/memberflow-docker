@@ -17,7 +17,7 @@ const TrainingGroupForm = () => {
   useEffect(() => {
     api.get("/teachers/getAll")
       .then((res) => setTeachers(res.data))
-      .catch((err) => console.error("Error loading teachers", err));
+      .catch((err) => console.error("Error al cargar profesores", err));
   }, []);
 
   const handleChange = (e) => {
@@ -37,7 +37,7 @@ const TrainingGroupForm = () => {
         schedule: formData.schedule,
         teacherId: parseInt(formData.teacherId),
       });
-      setSuccessMsg("Training group created successfully.");
+      setSuccessMsg("✅ Grupo de entrenamiento creado correctamente.");
       setFormData({ name: "", level: "", schedule: "", teacherId: "" });
     } catch (err) {
       console.error("Error al crear grupo", err);
@@ -47,25 +47,46 @@ const TrainingGroupForm = () => {
         "❌ Error al crear el grupo. Verifica los datos.";
       setErrorMsg(backendMsg);
     }
-    
   };
 
   return (
     <div className="card">
-      <h2>Create Training Group</h2>
-      <form onSubmit={handleSubmit} className="form">
-        <label>Name:</label>
-        <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+      <h2>Crear Grupo de Entrenamiento</h2>
+      <form onSubmit={handleSubmit} className="form-column">
+        <input
+          type="text"
+          name="name"
+          placeholder="Nombre del grupo"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
 
-        <label>Level:</label>
-        <input type="text" name="level" value={formData.level} onChange={handleChange} required />
+        <input
+          type="text"
+          name="level"
+          placeholder="Nivel"
+          value={formData.level}
+          onChange={handleChange}
+          required
+        />
 
-        <label>Schedule:</label>
-        <input type="datetime-local" name="schedule" value={formData.schedule} onChange={handleChange} required />
+        <label>Horario del grupo:</label>
+        <input
+          type="datetime-local"
+          name="schedule"
+          value={formData.schedule}
+          onChange={handleChange}
+          required
+        />
 
-        <label>Teacher:</label>
-        <select name="teacherId" value={formData.teacherId} onChange={handleChange} required>
-          <option value="">-- Select Teacher --</option>
+        <select
+          name="teacherId"
+          value={formData.teacherId}
+          onChange={handleChange}
+          required
+        >
+          <option value="">-- Selecciona un profesor responsable del grupo --</option>
           {teachers.map((teacher) => (
             <option key={teacher.id} value={teacher.id}>
               {teacher.user?.name} {teacher.user?.surname}
@@ -73,12 +94,11 @@ const TrainingGroupForm = () => {
           ))}
         </select>
 
-        <button type="submit">Create Group</button>
+        <button type="submit">Crear grupo</button>
       </form>
 
       <ErrorMessage message={errorMsg} type="error" />
       <ErrorMessage message={successMsg} type="success" />
-
     </div>
   );
 };

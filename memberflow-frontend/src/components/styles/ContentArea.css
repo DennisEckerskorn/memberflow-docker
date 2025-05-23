@@ -264,6 +264,28 @@ form textarea:focus {
   outline: none;
 }
 
+.group-student-list li {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background-color: #ffffff;
+  border: 1px solid #dcdde1;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.group-student-list li:hover {
+  background-color: #f0f4f8;
+}
+
+.group-student-list li .delete-button,
+.group-student-list li .add-button {
+  margin-left: 10px;
+}
+
+
 
 
 

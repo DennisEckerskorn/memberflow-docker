@@ -27,9 +27,9 @@ const TrainingGroupStudentManager = () => {
       const group = await api.get(`/training-groups/findById/${groupId}`);
       setGroupStudents(group.data.studentIds || []);
     } catch (err) {
-      console.error("Error fetching group students", err);
+      console.error("Error al cargar alumnos del grupo", err);
       const msg =
-        err.response?.data?.message || "❌ Error al cargar datos del grupo.";
+        err.response?.data?.message || "❌ Error al cargar alumnos del grupo.";
       setErrorMsg(msg);
       setGroupStudents([]);
     }
@@ -40,7 +40,7 @@ const TrainingGroupStudentManager = () => {
       await api.put(`/training-groups/assign-student`, null, {
         params: {
           groupId: selectedGroupId,
-          studentId: studentId,
+          studentId,
         },
       });
       setSuccessMsg("✅ Alumno asignado correctamente.");
@@ -60,15 +60,16 @@ const TrainingGroupStudentManager = () => {
       await api.put(`/training-groups/remove-student`, null, {
         params: {
           groupId: selectedGroupId,
-          studentId: studentId,
+          studentId,
         },
       });
-      setSuccessMsg("Alumno eliminado del grupo.");
+      setSuccessMsg("✅ Alumno eliminado del grupo.");
       setErrorMsg("");
       loadGroupStudents(selectedGroupId);
     } catch (err) {
       console.error(err);
-      const msg = err.response?.data?.message || "❌ Error al eliminar alumno.";
+      const msg =
+        err.response?.data?.message || "❌ Error al eliminar el alumno.";
       setErrorMsg(msg);
       setSuccessMsg("");
     }
@@ -77,11 +78,9 @@ const TrainingGroupStudentManager = () => {
   return (
     <div className="content-area">
       <div className="card">
-        <h2>Asignar Alumnos al Grupo de Entrenamiento</h2>
+        <h2>👥 Gestión de Alumnos por Grupo</h2>
 
-        <label htmlFor="groupSelect" style={{ fontWeight: "bold" }}>
-          🏷️ Selecciona un grupo:
-        </label>
+        <label htmlFor="groupSelect">🏷️ Selecciona un grupo:</label>
         <select
           id="groupSelect"
           value={selectedGroupId}
@@ -100,34 +99,42 @@ const TrainingGroupStudentManager = () => {
 
         {selectedGroupId && (
           <>
+            <hr style={{ margin: "20px 0" }} />
             <h3>📋 Alumnos Asignados</h3>
-            <ul>
-              {groupStudents.length === 0 && <li>No hay alumnos asignados.</li>}
-              {groupStudents.map((id) => {
-                const student = students.find((s) => s.id === id);
-                return (
-                  <li key={id}>
-                    {student?.user?.name} {student?.user?.surname}
-                    <button onClick={() => handleRemove(id)}>
-                      Eliminar del grupo
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+            {groupStudents.length === 0 ? (
+              <p>No hay alumnos asignados a este grupo.</p>
+            ) : (
+              <ul className="group-student-list">
+                {groupStudents.map((id) => {
+                  const student = students.find((s) => s.id === id);
+                  return (
+                    <li key={id}>
+                      🎓 {student?.user?.name} {student?.user?.surname}
+                      <button
+                        className="delete-button"
+                        onClick={() => handleRemove(id)}
+                      >
+                        Eliminar
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
 
-            <h3>➕ Añadir Alumno</h3>
-            <ul>
+            <hr style={{ margin: "20px 0" }} />
+            <h3>➕ Añadir Alumnos Disponibles</h3>
+            <ul className="group-student-list">
               {students
                 .filter((s) => !groupStudents.includes(s.id))
                 .map((s) => (
                   <li key={s.id}>
-                    {s.user?.name} {s.user?.surname}
+                    👤 {s.user?.name} {s.user?.surname}
                     <button
                       className="add-button"
                       onClick={() => handleAssign(s.id)}
                     >
-                      Añadir al grupo
+                      Añadir
                     </button>
                   </li>
                 ))}
