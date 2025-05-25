@@ -82,12 +82,11 @@ public class MembershipService extends AbstractService<Membership, Integer> {
         logger.info("Deleting membership by ID: {}", id);
         Membership membership = findById(id);
 
-        // Verificar si está asignado a un estudiante
-        Student student = membership.getStudent();
-        if (student != null) {
-            logger.error("Cannot delete membership. It is assigned to student ID {}", student.getId());
-            throw new InvalidDataException("Cannot delete membership because it is assigned to a student");
+        if (!membership.getStudents().isEmpty()) {
+            logger.error("Cannot delete membership. It is assigned to {} student(s)", membership.getStudents().size());
+            throw new InvalidDataException("Cannot delete membership because it is assigned to one or more students");
         }
+
 
         super.deleteById(id);
         logger.info("Membership with ID {} deleted", id);

@@ -1,7 +1,9 @@
 package com.denniseckerskorn.services.class_managment_services;
 
+import com.denniseckerskorn.entities.class_managment.TrainingGroup;
 import com.denniseckerskorn.entities.class_managment.TrainingSession;
 import com.denniseckerskorn.entities.user_managment.users.Student;
+import com.denniseckerskorn.enums.StatusValues;
 import com.denniseckerskorn.exceptions.DuplicateEntityException;
 import com.denniseckerskorn.exceptions.EntityNotFoundException;
 import com.denniseckerskorn.exceptions.InvalidDataException;
@@ -107,13 +109,29 @@ public class TrainingSessionService extends AbstractService<TrainingSession, Int
 
     @Transactional
     public void deleteAllAssistancesBySession(Integer sessionId) {
+        logger.info("Deleting all assistances for session ID: {}", sessionId);
         TrainingSession session = findById(sessionId);
 
         if (session.getAssistances() != null && !session.getAssistances().isEmpty()) {
             session.getAssistances().clear();
             update(session);
         }
+        logger.info("All assistances for session ID: {} have been deleted", sessionId);
     }
 
+    @Transactional
+    public void generateRecurringSession(TrainingGroup group, int months) {
+        logger.info("Generating recurring sessions for group: {} for {} months", group.getName(), months);
+        LocalDateTime baseDate = group.getSchedule();
 
+        for (int i = 0; i < months * 4; i++) {
+            LocalDateTime sessionDate = baseDate.plusWeeks(i);
+            TrainingSession newSession = new TrainingSession();
+            newSession.setDate(sessionDate);
+            newSession.setStatus(StatusValues.ACTIVE);
+            newSession.setTrainingGroup(group);
+            save(newSession);
+            logger.info("Created new session: {} for group: {}", newSession.getId(), group.getName());
+        }
+    }
 }

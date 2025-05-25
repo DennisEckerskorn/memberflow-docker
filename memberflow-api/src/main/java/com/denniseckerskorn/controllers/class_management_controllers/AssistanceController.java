@@ -3,6 +3,9 @@ package com.denniseckerskorn.controllers.class_management_controllers;
 
 import com.denniseckerskorn.dtos.class_managment_dtos.AssistanceDTO;
 import com.denniseckerskorn.entities.class_managment.Assistance;
+import com.denniseckerskorn.entities.class_managment.TrainingSession;
+import com.denniseckerskorn.entities.user_managment.users.Student;
+import com.denniseckerskorn.exceptions.BadRequestException;
 import com.denniseckerskorn.services.class_managment_services.AssistanceService;
 import com.denniseckerskorn.services.class_managment_services.TrainingSessionService;
 import com.denniseckerskorn.services.user_managment_services.StudentService;
@@ -36,13 +39,19 @@ public class AssistanceController {
     @Operation(summary = "Create a new assistance record")
     @PostMapping("/create")
     public ResponseEntity<AssistanceDTO> create(@RequestBody AssistanceDTO dto) {
-        Assistance assistance = dto.toEntity(
-                studentService.findById(dto.getStudentId()),
-                trainingSessionService.findById(dto.getSessionId())
-        );
+        Student student = studentService.findById(dto.getStudentId());
+        TrainingSession session = trainingSessionService.findById(dto.getSessionId());
+
+        if (!student.getTrainingGroups().contains(session.getTrainingGroup())) {
+            throw new BadRequestException("The student does not belong to the selected training group.");
+        }
+
+        Assistance assistance = dto.toEntity(student, session);
         Assistance saved = assistanceService.save(assistance);
+
         return ResponseEntity.ok(AssistanceDTO.fromEntity(saved));
     }
+
 
     @Operation(summary = "Update an existing assistance record", description = "Update an existing assistance record")
     @PutMapping("/update")

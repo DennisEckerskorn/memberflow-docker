@@ -31,8 +31,8 @@ const SidebarAdmin = () => {
           <button onClick={() => navigate('/admin/class-management/training-session/list')}>📆 Ver Sesiones</button>
           <button onClick={() => navigate('/admin/class-management/assistance/create')}>📝 Registrar Asistencia</button>
           <button onClick={() => navigate('/admin/class-management/assistance/list')}>📋 Ver Asistencias</button>
-          <button onClick={() => navigate('/admin/class-management/memberships/create')}>➕ Crear Membresía</button>
-          <button onClick={() => navigate('/admin/class-management/memberships/list')}>🏷️ Ver Membresías</button>
+          <button onClick={() => navigate('/admin/class-management/memberships/details')}>➕ Detalles de las Membresías</button>
+          <button onClick={() => navigate('/admin/class-management/memberships/list')}>🏷️ Asignar Membresías</button>
         </div>
 
         <div className="submenu">

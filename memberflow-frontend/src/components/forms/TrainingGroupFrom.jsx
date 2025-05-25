@@ -8,6 +8,7 @@ const TrainingGroupForm = () => {
     level: "",
     schedule: "",
     teacherId: "",
+    recurrenceMonths: 1, // nuevo campo
   });
 
   const [teachers, setTeachers] = useState([]);
@@ -36,9 +37,10 @@ const TrainingGroupForm = () => {
         level: formData.level,
         schedule: formData.schedule,
         teacherId: parseInt(formData.teacherId),
+        recurrenceMonths: parseInt(formData.recurrenceMonths), // incluir
       });
       setSuccessMsg("✅ Grupo de entrenamiento creado correctamente.");
-      setFormData({ name: "", level: "", schedule: "", teacherId: "" });
+      setFormData({ name: "", level: "", schedule: "", teacherId: "", recurrenceMonths: 1 });
     } catch (err) {
       console.error("Error al crear grupo", err);
       const backendMsg =
@@ -77,6 +79,17 @@ const TrainingGroupForm = () => {
           name="schedule"
           value={formData.schedule}
           onChange={handleChange}
+          required
+        />
+
+        <label>Meses de recurrencia:</label>
+        <input
+          type="number"
+          name="recurrenceMonths"
+          value={formData.recurrenceMonths}
+          onChange={handleChange}
+          min={1}
+          max={24}
           required
         />
 

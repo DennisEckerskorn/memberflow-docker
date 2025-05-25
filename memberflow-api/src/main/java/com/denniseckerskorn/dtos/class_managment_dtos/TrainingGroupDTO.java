@@ -20,6 +20,7 @@ public class TrainingGroupDTO {
     private LocalDateTime schedule;
     private Integer teacherId;
     private Set<Integer> studentIds = new HashSet<>();
+    private Integer recurrenceMonths;
 
     public TrainingGroupDTO() {
     }
@@ -106,5 +107,13 @@ public class TrainingGroupDTO {
 
     public void setStudentIds(Set<Integer> studentIds) {
         this.studentIds = studentIds;
+    }
+
+    public Integer getRecurrenceMonths() {
+        return recurrenceMonths;
+    }
+
+    public void setRecurrenceMonths(Integer recurrenceMonths) {
+        this.recurrenceMonths = recurrenceMonths;
     }
 }

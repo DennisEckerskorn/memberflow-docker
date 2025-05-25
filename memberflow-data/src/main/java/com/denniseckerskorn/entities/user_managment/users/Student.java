@@ -44,7 +44,7 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StudentHistory> histories = new HashSet<>();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_membership")
     private Membership membership;
 

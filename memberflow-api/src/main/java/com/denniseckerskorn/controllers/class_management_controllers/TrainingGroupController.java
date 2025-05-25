@@ -60,15 +60,14 @@ public class TrainingGroupController {
         group.setTeacher(teacher);
         TrainingGroup createdGroup = trainingGroupService.save(group);
 
-        TrainingSession trainingSession = new TrainingSession();
-        trainingSession.setTrainingGroup(createdGroup);
-        trainingSession.setDate(createdGroup.getSchedule());
-        trainingSession.setStatus(StatusValues.ACTIVE);
-        trainingSessionService.save(trainingSession);
+        int months = dto.getRecurrenceMonths() != null && dto.getRecurrenceMonths() > 0
+                ? dto.getRecurrenceMonths()
+                : 1;
+        trainingSessionService.generateRecurringSession(createdGroup, months);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new TrainingGroupDTO(createdGroup));
-
     }
+
 
     @Operation(summary = "Assign a student to a group")
     @PutMapping("/assign-student")
@@ -162,4 +161,20 @@ public class TrainingGroupController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Generate recurring training sessions for a group", description = "Generates recurring training sessions for a specified number of months")
+    @Transactional
+    @PostMapping("/generate-recurring-sessions")
+    public ResponseEntity<TrainingGroupDTO> generateRecurringSessions(@RequestBody TrainingGroupDTO dto) {
+        TrainingGroup group = trainingGroupService.findById(dto.getId());
+
+        int months = (dto.getRecurrenceMonths() != null && dto.getRecurrenceMonths() > 0)
+                ? dto.getRecurrenceMonths()
+                : 1;
+
+        trainingSessionService.generateRecurringSession(group, months);
+
+        return ResponseEntity.ok(new TrainingGroupDTO(group));
+    }
+
 }

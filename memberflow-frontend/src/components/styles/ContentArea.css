@@ -286,6 +286,29 @@ form textarea:focus {
 }
 
 
+.status-label {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.status-active {
+  background-color: #dff9fb;
+  color: #27ae60;
+}
+
+.status-cancelled {
+  background-color: #fddede;
+  color: #e74c3c;
+}
+
+.status-finished {
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+}
+
+
 
 
 

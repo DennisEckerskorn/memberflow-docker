@@ -6,7 +6,9 @@ import com.denniseckerskorn.enums.StatusValues;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "MEMBERSHIPS")
@@ -29,8 +31,8 @@ public class Membership {
     @Column(name = "status", nullable = false, length = 20)
     private StatusValues status;
 
-    @OneToOne(mappedBy = "membership")
-    private Student student;
+    @OneToMany(mappedBy = "membership")
+    private Set<Student> students = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -52,8 +54,8 @@ public class Membership {
         return status;
     }
 
-    public Student getStudent() {
-        return student;
+    public Set<Student> getStudents() {
+        return students;
     }
 
     public void setId(Integer id) {
@@ -76,8 +78,8 @@ public class Membership {
         this.status = status;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     @Override
@@ -102,7 +104,6 @@ public class Membership {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", status=" + status +
-                ", student=" + (student != null ? student.getId() : "null") +
                 '}';
     }
 }

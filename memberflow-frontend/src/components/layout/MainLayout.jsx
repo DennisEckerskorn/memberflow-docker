@@ -19,7 +19,7 @@ import AssistanceForm from '../forms/AssitanceForm';
 import AssistanceList from '../lists/AssistanceList';
 import TrainingSessionList from '../lists/TrainingSessionList';
 import ViewTimetable from '../forms/ViewTimetable';
-import MembershipForm from '../forms/MembershipCreateForm';
+import MembershipDetails from '../forms/MembershipDetails';
 import MembershipList from '../lists/MembershipList';
 import InvoiceForm from '../forms/InvoiceForm';
 import InvoiceList from '../lists/InvoiceList';
@@ -60,7 +60,7 @@ const MainLayout = () => {
             <Route path="/admin/class-management/assistance/list" element={<AssistanceList />} />
             <Route path="/admin/class-management/training-session/list" element={<TrainingSessionList />} />
             <Route path="/admin/class-management/training-groups/view-timetable" element={<ViewTimetable />} />
-            <Route path="/admin/class-management/memberships/create" element={<MembershipForm />} />
+            <Route path="/admin/class-management/memberships/details" element={<MembershipDetails />} />
             <Route path="/admin/class-management/memberships/list" element={<MembershipList />} />
 
             {/* Finance */}
