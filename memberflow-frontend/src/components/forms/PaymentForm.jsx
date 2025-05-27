@@ -88,81 +88,82 @@ const PaymentForm = () => {
       <div className="card">
         <h2>Registrar Pago de una Factura</h2>
 
-        <label>Seleccionar estudiante:</label>
-        <select
-          className="form-select"
-          value={selectedUserId}
-          onChange={handleStudentChange}
-        >
-          <option value="">-- Selecciona un estudiante --</option>
-          {students.map((s) =>
-            s.user ? (
-              <option key={s.id} value={s.user.id}>
-                {s.user.name} {s.user.lastName} ({s.user.email})
-              </option>
-            ) : null
-          )}
-        </select>
-
-        {invoices.length > 0 && (
-          <>
-            <label>Seleccionar factura:</label>
-            <select
-              className="form-select"
-              value={selectedInvoiceId}
-              onChange={(e) => setSelectedInvoiceId(e.target.value)}
-            >
-              <option value="">-- Selecciona una factura --</option>
-              {invoices.map((inv) => (
-                <option key={inv.id} value={inv.id}>
-                  #{inv.id} - {new Date(inv.date).toLocaleDateString()} - Total:{" "}
-                  {inv.total.toFixed(2)} €
+        <form className="form-column" onSubmit={handleSubmit}>
+          <label>Seleccionar estudiante:</label>
+          <select
+            className="form-select"
+            value={selectedUserId}
+            onChange={handleStudentChange}
+            required
+          >
+            <option value="">-- Selecciona un estudiante --</option>
+            {students.map((s) =>
+              s.user ? (
+                <option key={s.id} value={s.user.id}>
+                  {s.user.name} {s.user.lastName} ({s.user.email})
                 </option>
-              ))}
-            </select>
-          </>
-        )}
+              ) : null
+            )}
+          </select>
 
-        {invoices.length === 0 && selectedUserId && (
-          <p style={{ marginTop: "1rem", color: "gray" }}>
-            No hay facturas pendientes de pago para este estudiante.
-          </p>
-        )}
+          {invoices.length > 0 && (
+            <>
+              <label>Seleccionar factura:</label>
+              <select
+                className="form-select"
+                value={selectedInvoiceId}
+                onChange={(e) => setSelectedInvoiceId(e.target.value)}
+                required
+              >
+                <option value="">-- Selecciona una factura --</option>
+                {invoices.map((inv) => (
+                  <option key={inv.id} value={inv.id}>
+                    #{inv.id} - {new Date(inv.date).toLocaleDateString()} - Total: {inv.total.toFixed(2)} €
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
-        {selectedInvoiceId && (
-          <>
-            <label>Importe pagado (€):</label>
-            <input
-              className="form-input"
-              type="number"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
+          {invoices.length === 0 && selectedUserId && (
+            <p className="text-muted">
+              No hay facturas pendientes de pago para este estudiante.
+            </p>
+          )}
 
-            <label>Método de pago:</label>
-            <select
-              className="form-select"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            >
-              <option value="CASH">Efectivo</option>
-              <option value="CREDIT_CARD">Tarjeta</option>
-              <option value="BANK_TRANSFER">Transferencia</option>
-            </select>
+          {selectedInvoiceId && (
+            <>
+              <label>Importe pagado (€):</label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
 
-            <ErrorMessage message={error} type="error" />
-            <ErrorMessage message={success} type="success" />
+              <label>Método de pago:</label>
+              <select
+                className="form-select"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                required
+              >
+                <option value="CASH">Efectivo</option>
+                <option value="CREDIT_CARD">Tarjeta</option>
+                <option value="BANK_TRANSFER">Transferencia</option>
+              </select>
 
-            <button
-              className="btn btn-primary"
-              style={{ marginTop: "1rem" }}
-              onClick={handleSubmit}
-            >
-              💳 Confirmar Pago
-            </button>
-          </>
-        )}
+              <ErrorMessage message={error} type="error" />
+              <ErrorMessage message={success} type="success" />
+
+              <button type="submit" className="btn btn-primary">
+                💳 Confirmar Pago
+              </button>
+            </>
+          )}
+        </form>
       </div>
     </div>
   );

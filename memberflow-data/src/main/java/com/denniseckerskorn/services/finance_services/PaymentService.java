@@ -50,7 +50,7 @@ public class PaymentService extends AbstractService<Payment, Integer> {
 
         Payment savedPayment = super.save(payment);
 
-        invoice.setPayment(savedPayment);
+        //invoice.setPayment(savedPayment);
         invoice.setStatus(StatusValues.PAID);
         invoiceService.update(invoice);
 
@@ -58,14 +58,28 @@ public class PaymentService extends AbstractService<Payment, Integer> {
     }
 
 
-
     @Override
     @Transactional
-    public Payment update(Payment entity) throws EntityNotFoundException, InvalidDataException {
-        logger.info("Updating payment: {}", entity);
-        validate(entity);
-        updateInvoiceStatus(entity);
-        return super.update(entity);
+    public Payment update(Payment payment) throws EntityNotFoundException, InvalidDataException {
+        logger.info("Updating payment: {}", payment);
+        validate(payment);
+
+        Payment existingPayment = findById(payment.getId());
+
+        if (existingPayment == null) {
+            throw new EntityNotFoundException("Payment not found");
+        }
+
+        Invoice invoice = payment.getInvoice();
+
+        if (invoice == null || invoiceService.findById(invoice.getId()) == null) {
+            throw new EntityNotFoundException("Invoice not found for the payment");
+        }
+
+        invoice.setStatus(StatusValues.PAID);
+        invoiceService.update(invoice);
+
+        return super.update(payment);
     }
 
     @Override
@@ -103,17 +117,16 @@ public class PaymentService extends AbstractService<Payment, Integer> {
     }
 
     @Transactional
-    private void updateInvoiceStatus(Payment payment) {
-        Invoice invoice = payment.getInvoice();
-        invoice.setStatus(StatusValues.PAID);
-        invoiceService.update(invoice);
-    }
-
-    @Transactional
     public void removePayment(Integer paymentId) {
         Payment payment = findById(paymentId);
+        if (payment == null) {
+            throw new EntityNotFoundException("The payment doesn't exist.");
+        }
+
         Invoice invoice = payment.getInvoice();
+
         super.deleteById(paymentId);
+
         invoice.setStatus(StatusValues.NOT_PAID);
         invoiceService.update(invoice);
     }

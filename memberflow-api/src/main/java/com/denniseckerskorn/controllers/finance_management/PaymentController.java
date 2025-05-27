@@ -34,8 +34,15 @@ public class PaymentController {
             throws DuplicateEntityException, EntityNotFoundException {
 
         Invoice invoice = paymentService.getInvoiceById(dto.getInvoiceId());
+        if (invoice == null) {
+            throw new EntityNotFoundException("Invoice not found with ID: " + dto.getInvoiceId());
+        }
+
         Payment saved = paymentService.save(dto.toEntityWithInvoice(invoice));
 
+        if (saved == null) {
+            throw new DuplicateEntityException("Payment already exists for invoice ID: " + dto.getInvoiceId());
+        }
         return new ResponseEntity<>(new PaymentDTO(saved), HttpStatus.CREATED);
     }
 
@@ -46,8 +53,15 @@ public class PaymentController {
             throws EntityNotFoundException, InvalidDataException {
 
         Invoice invoice = paymentService.getInvoiceById(dto.getInvoiceId());
+        if (invoice == null) {
+            throw new EntityNotFoundException("Invoice not found with ID: " + dto.getInvoiceId());
+        }
         Payment updated = paymentService.update(dto.toEntityWithInvoice(invoice));
 
+        if (updated == null) {
+            throw new InvalidDataException("Payment update failed for invoice ID: " + dto.getInvoiceId());
+        }
+        
         return new ResponseEntity<>(new PaymentDTO(updated), HttpStatus.OK);
     }
 

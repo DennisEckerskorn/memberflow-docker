@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
-
+import ErrorMessage from "../common/ErrorMessage";
+import "../styles/ContentArea.css";
 
 const IVATypeManager = () => {
   const [ivaTypes, setIvaTypes] = useState([]);
   const [newIva, setNewIva] = useState({ percentage: "", description: "" });
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  useEffect(() => {
+    fetchIvaTypes();
+  }, []);
 
   const fetchIvaTypes = async () => {
     try {
       const res = await api.get("/iva-types/getAll");
       setIvaTypes(res.data);
+      setErrorMsg("");
     } catch (err) {
       console.error(err);
-      setError("Error al obtener los tipos de IVA.");
+      setErrorMsg("❌ Error al obtener los tipos de IVA.");
     }
   };
-
-  useEffect(() => {
-    fetchIvaTypes();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,9 +30,10 @@ const IVATypeManager = () => {
   };
 
   const handleAddIva = async () => {
-    setError("");
+    setErrorMsg("");
+    setSuccessMsg("");
     if (!newIva.percentage || isNaN(newIva.percentage)) {
-      setError("Introduce un porcentaje válido.");
+      setErrorMsg("❌ Introduce un porcentaje válido.");
       return;
     }
 
@@ -41,10 +45,11 @@ const IVATypeManager = () => {
 
       await api.post("/iva-types/create", payload);
       setNewIva({ percentage: "", description: "" });
+      setSuccessMsg("✅ Tipo de IVA añadido correctamente.");
       fetchIvaTypes();
     } catch (err) {
       console.error(err);
-      setError("No se pudo crear el tipo de IVA.");
+      setErrorMsg("❌ No se pudo crear el tipo de IVA.");
     }
   };
 
@@ -52,66 +57,70 @@ const IVATypeManager = () => {
     if (!window.confirm("¿Seguro que deseas eliminar este tipo de IVA?")) return;
     try {
       await api.delete(`/iva-types/deleteById/${id}`);
+      setSuccessMsg("✅ Tipo de IVA eliminado correctamente.");
       fetchIvaTypes();
     } catch (err) {
       console.error(err);
-      setError("No se pudo eliminar el tipo de IVA.");
+      setErrorMsg("❌ No se pudo eliminar el tipo de IVA.");
     }
   };
 
   return (
-    <div className="content-area">
+    <div className="card">
       <h2>Gestión de Tipos de IVA</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <ErrorMessage message={errorMsg} type="error" />
+      <ErrorMessage message={successMsg} type="success" />
 
-      <div className="form-section">
-        <label>Porcentaje:</label>
+      <div className="form-inline" style={{ marginBottom: "1.5rem" }}>
         <input
           type="number"
           name="percentage"
+          placeholder="Porcentaje (%)"
           value={newIva.percentage}
           onChange={handleChange}
           step="0.01"
+          className="form-input"
         />
-
-        <label>Descripción:</label>
         <input
           type="text"
           name="description"
+          placeholder="Descripción"
           value={newIva.description}
           onChange={handleChange}
+          className="form-input"
         />
-
         <button className="btn btn-primary" onClick={handleAddIva}>
           + Añadir IVA
         </button>
       </div>
 
-      <table className="table" style={{ marginTop: "2rem" }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Porcentaje</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ivaTypes.map((iva) => (
-            <tr key={iva.id}>
-              <td>{iva.id}</td>
-              <td>{iva.percentage}%</td>
-              <td>{iva.description}</td>
-              <td>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(iva.id)}>
-                  🗑️ Eliminar
-                </button>
-              </td>
+      <div className="table-wrapper">
+        <table className="styled-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Porcentaje</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {ivaTypes.map((iva) => (
+              <tr key={iva.id}>
+                <td>{iva.id}</td>
+                <td>{iva.percentage}%</td>
+                <td>{iva.description}</td>
+                <td>
+                  <button className="delete-btn" onClick={() => handleDelete(iva.id)}>
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import InvoiceLineItem from "./InvoiceLineItem";
 import ErrorMessage from "../common/ErrorMessage";
 import api from "../../api/axiosConfig";
+import "../styles/ContentArea.css";
 
 const InvoiceForm = () => {
   const [students, setStudents] = useState([]);
@@ -17,9 +18,7 @@ const InvoiceForm = () => {
     api.get("/products-services/getAll").then((res) => setProducts(res.data));
   }, []);
 
-  const addLine = () => {
-    setLines([...lines, { productServiceId: "", quantity: 1 }]);
-  };
+  const addLine = () => setLines([...lines, { productServiceId: "", quantity: 1 }]);
 
   const updateLine = (index, updatedLine) => {
     const newLines = [...lines];
@@ -31,27 +30,21 @@ const InvoiceForm = () => {
     setLines(lines.filter((_, i) => i !== index));
   };
 
-  const calculateSubtotal = () => {
-    return lines.reduce((acc, line) => {
+  const calculateSubtotal = () =>
+    lines.reduce((acc, line) => {
       const product = products.find((p) => p.id === parseInt(line.productServiceId));
-      if (!product) return acc;
-      return acc + product.price * (parseInt(line.quantity) || 1);
+      return product ? acc + product.price * (parseInt(line.quantity) || 1) : acc;
     }, 0);
-  };
 
-  const calculateIVA = () => {
-    return lines.reduce((acc, line) => {
+  const calculateIVA = () =>
+    lines.reduce((acc, line) => {
       const product = products.find((p) => p.id === parseInt(line.productServiceId));
       if (!product || !product.ivaType) return acc;
       const quantity = parseInt(line.quantity) || 1;
-      const iva = product.ivaType.percentage || 0;
-      return acc + (product.price * quantity * (iva / 100));
+      return acc + (product.price * quantity * (product.ivaType.percentage / 100));
     }, 0);
-  };
 
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateIVA();
-  };
+  const calculateTotal = () => calculateSubtotal() + calculateIVA();
 
   const createInvoice = async () => {
     setError("");
@@ -84,7 +77,6 @@ const InvoiceForm = () => {
       setCreatedInvoice(res.data);
       alert("✅ Factura creada correctamente.");
     } catch (err) {
-      console.error(err);
       setError("❌ Error al crear la factura: " + (err.response?.data?.message || err.message));
     }
   };
@@ -102,7 +94,6 @@ const InvoiceForm = () => {
       document.body.appendChild(link);
       link.click();
     } catch (err) {
-      console.error(err);
       setError("❌ Error al descargar el PDF.");
     }
   };
@@ -112,32 +103,30 @@ const InvoiceForm = () => {
       <div className="card">
         <h2>Crear Factura</h2>
 
-        <label>Seleccionar estudiante:</label>
-        <select
-          className="form-select"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        >
-          <option value="">-- Selecciona un estudiante --</option>
-          {students.map((s) =>
-            s.user ? (
-              <option key={s.id} value={s.user.id}>
-                {s.user.name} {s.user.lastName} ({s.user.email})
-              </option>
-            ) : null
-          )}
-        </select>
+        <div className="form-column">
+          <label>Estudiante</label>
+          <select className="form-select" value={userId} onChange={(e) => setUserId(e.target.value)} required>
+            <option value="">-- Selecciona un estudiante --</option>
+            {students.map((s) =>
+              s.user ? (
+                <option key={s.id} value={s.user.id}>
+                  {s.user.name} {s.user.lastName} ({s.user.email})
+                </option>
+              ) : null
+            )}
+          </select>
 
-        <label>Fecha de emisión:</label>
-        <input
-          className="form-input"
-          type="datetime-local"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+          <label>Fecha de emisión</label>
+          <input
+            className="form-input"
+            type="datetime-local"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
+        </div>
 
         <h3>Productos / Servicios</h3>
-
         {lines.map((line, i) => (
           <InvoiceLineItem
             key={i}
@@ -149,34 +138,33 @@ const InvoiceForm = () => {
           />
         ))}
 
-        <div style={{ marginTop: "1rem" }}>
-          <h4>Subtotal: <strong>{calculateSubtotal().toFixed(2)} €</strong></h4>
-          <h4>IVA: <strong>{calculateIVA().toFixed(2)} €</strong></h4>
-          <h4>Total estimado con IVA: <strong>{calculateTotal().toFixed(2)} €</strong></h4>
+        <div className="invoice-summary">
+          <div>
+            <h4>Subtotal:</h4>
+            <p><strong>{calculateSubtotal().toFixed(2)} €</strong></p>
+          </div>
+          <div>
+            <h4>IVA:</h4>
+            <p><strong>{calculateIVA().toFixed(2)} €</strong></p>
+          </div>
+          <div>
+            <h4>Total con IVA:</h4>
+            <p><strong>{calculateTotal().toFixed(2)} €</strong></p>
+          </div>
         </div>
 
         <ErrorMessage message={error} />
 
-        <div style={{ marginTop: "1rem" }}>
-          <button className="btn btn-secondary" onClick={addLine}>
-            + Añadir Producto
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={createInvoice}
-            style={{ marginLeft: "1rem" }}
-          >
-            ✅ Crear Factura
-          </button>
+        <div style={{ display: "flex", gap: "10px", marginTop: "1rem" }}>
+          <button className="btn btn-success" onClick={addLine}>+ Añadir Producto</button>
+          <button className="btn btn-primary" onClick={createInvoice}>Crear Factura</button>
         </div>
 
         {createdInvoice && (
           <div style={{ marginTop: "2rem" }}>
-            <h4>Factura creada: #{createdInvoice.id}</h4>
-            <h4>Total con IVA: <strong>{createdInvoice.total.toFixed(2)} €</strong></h4>
-            <button className="btn btn-primary" onClick={downloadPdf}>
-              📄 Descargar PDF
-            </button>
+            <h4>Factura #{createdInvoice.id} creada correctamente</h4>
+            <p><strong>Total:</strong> {createdInvoice.total.toFixed(2)} €</p>
+            <button className="btn btn-primary" onClick={downloadPdf}>📄 Descargar PDF</button>
           </div>
         )}
       </div>
