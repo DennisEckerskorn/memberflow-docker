@@ -19,7 +19,6 @@ services:
       timeout: 5s
       retries: 5
 
-
   backend:
     build:
       context: ../memberflow-api
@@ -37,8 +36,6 @@ services:
       JWT_SECRET: c2VjdXJlc2VjdXJlc2VjdXJlc2VjdXJlMTIzNDU2
       JWT_EXPIRATION: 7200000
 
-
-
   frontend:
     build:
       context: ..
@@ -48,3 +45,13 @@ services:
       - backend
     ports:
       - "3000:80"
+
+  db-restore:
+    image: mysql:8.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./backup.sql:/backup.sql
+      - ./docker/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+    entrypoint: ["/bin/bash", "/docker-entrypoint-initdb.d/initdb.sh"]
