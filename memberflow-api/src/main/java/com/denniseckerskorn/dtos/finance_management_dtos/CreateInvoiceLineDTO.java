@@ -39,7 +39,6 @@ public class CreateInvoiceLineDTO {
         this.unitPrice = unitPrice;
     }
 
-    // Convierte a entidad con parámetros necesarios
     public InvoiceLine toEntity(Invoice invoice, ProductService productService) {
         InvoiceLine entity = new InvoiceLine();
         entity.setInvoice(invoice);
@@ -47,11 +46,10 @@ public class CreateInvoiceLineDTO {
         entity.setQuantity(this.quantity);
         entity.setUnitPrice(this.unitPrice);
         entity.setSubtotal(this.unitPrice.multiply(BigDecimal.valueOf(this.quantity)));
-        entity.setDescription(productService.getName()); // opcional
+        entity.setDescription(productService.getName());
         return entity;
     }
 
-    // Convierte desde una entidad (opcional)
     public static CreateInvoiceLineDTO fromEntity(InvoiceLine entity) {
         CreateInvoiceLineDTO dto = new CreateInvoiceLineDTO();
         dto.setProductServiceId(entity.getProductService() != null ? entity.getProductService().getId() : null);

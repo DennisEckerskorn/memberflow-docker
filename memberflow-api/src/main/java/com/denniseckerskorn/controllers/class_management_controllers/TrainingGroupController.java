@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
  * Controller for managing training groups.
  * Provides endpoints for creating, updating, retrieving, and deleting training groups.
  */
-
 @RestController
 @RequestMapping("/api/v1/training-groups")
 @Tag(name = "Training Group Management", description = "Operations related to training group management")
@@ -40,7 +39,14 @@ public class TrainingGroupController {
     private final StudentService studentService;
     private final TrainingSessionService trainingSessionService;
 
-
+    /**
+     * Constructor for TrainingGroupController.
+     *
+     * @param trainingGroupService   Service for handling training group records.
+     * @param teacherService         Service for handling teacher records.
+     * @param studentService         Service for handling student records.
+     * @param trainingSessionService Service for handling training session records.
+     */
     public TrainingGroupController(TrainingGroupService trainingGroupService, TeacherService teacherService, StudentService studentService, TrainingSessionService trainingSessionService) {
         this.trainingGroupService = trainingGroupService;
         this.teacherService = teacherService;
@@ -48,6 +54,12 @@ public class TrainingGroupController {
         this.trainingSessionService = trainingSessionService;
     }
 
+    /**
+     * Creates a new training group with a teacher.
+     *
+     * @param dto The TrainingGroupDTO containing the details of the group to be created.
+     * @return ResponseEntity containing the created TrainingGroupDTO.
+     */
     @Operation(summary = "Create a training group with a teacher")
     @PostMapping("/create")
     public ResponseEntity<TrainingGroupDTO> createGroup(@RequestBody TrainingGroupDTO dto) {
@@ -68,7 +80,13 @@ public class TrainingGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new TrainingGroupDTO(createdGroup));
     }
 
-
+    /**
+     * Assigns a student to a training group.
+     *
+     * @param groupId   The ID of the training group.
+     * @param studentId The ID of the student to be assigned.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @Operation(summary = "Assign a student to a group")
     @PutMapping("/assign-student")
     public ResponseEntity<Void> assignStudent(@RequestParam Integer groupId, @RequestParam Integer studentId) {
@@ -79,6 +97,13 @@ public class TrainingGroupController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Removes a student from a training group.
+     *
+     * @param groupId   The ID of the training group.
+     * @param studentId The ID of the student to be removed.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @Operation(summary = "Remove a student from a group")
     @PutMapping("/remove-student")
     public ResponseEntity<Void> removeStudent(@RequestParam Integer groupId, @RequestParam Integer studentId) {
@@ -89,7 +114,14 @@ public class TrainingGroupController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Actualizar un grupo de entrenamiento existente", description = "Actualiza un grupo de entrenamiento por su ID")
+    /**
+     * Updates an existing training group.
+     *
+     * @param id  The ID of the training group to update.
+     * @param dto The TrainingGroupDTO containing the updated details of the group.
+     * @return ResponseEntity containing the updated TrainingGroupDTO.
+     */
+    @Operation(summary = "Updates a training-group by its ID", description = "Update a training group with the specified ID")
     @Transactional
     @PutMapping("/update/{id}")
     public ResponseEntity<TrainingGroupDTO> update(@PathVariable Integer id, @RequestBody TrainingGroupDTO dto) {
@@ -113,13 +145,23 @@ public class TrainingGroupController {
         return ResponseEntity.ok(new TrainingGroupDTO(updatedGroup));
     }
 
-
+    /**
+     * Finds a training group by its ID.
+     *
+     * @param id The ID of the training group to retrieve.
+     * @return ResponseEntity containing the TrainingGroupDTO if found, or 404 Not Found if not found.
+     */
     @Operation(summary = "Find a training group by ID", description = "Retrieve a training group with the specified ID")
     @GetMapping("findById/{id}")
     public ResponseEntity<TrainingGroupDTO> findGroupById(@PathVariable Integer id) {
         return ResponseEntity.ok(new TrainingGroupDTO(trainingGroupService.findById(id)));
     }
 
+    /**
+     * Retrieves all training groups.
+     *
+     * @return ResponseEntity containing a list of TrainingGroupDTOs.
+     */
     @Operation(summary = "Get all training groups", description = "Retrieve a list of all training groups")
     @GetMapping("/getAll")
     public ResponseEntity<List<TrainingGroupDTO>> getAll() {
@@ -130,13 +172,19 @@ public class TrainingGroupController {
         );
     }
 
+    /**
+     * Deletes a training group by its ID.
+     *
+     * @param id The ID of the training group to delete.
+     * @return ResponseEntity indicating the result of the deletion.
+     */
     @Operation(summary = "Delete a training group by ID", description = "Delete a training group with the specified ID")
     @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         TrainingGroup group = trainingGroupService.findById(id);
         if (group == null) {
-            throw new EntityNotFoundException("Group not found");
+            throw new EntityNotFoundException("Training group not found with ID: " + id);
         }
 
         for (TrainingSession session : group.getTrainingSessions()) {
@@ -162,6 +210,12 @@ public class TrainingGroupController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Generates recurring training sessions for a group.
+     *
+     * @param dto The TrainingGroupDTO containing the group ID and recurrence details.
+     * @return ResponseEntity containing the updated TrainingGroupDTO.
+     */
     @Operation(summary = "Generate recurring training sessions for a group", description = "Generates recurring training sessions for a specified number of months")
     @Transactional
     @PostMapping("/generate-recurring-sessions")
@@ -176,5 +230,4 @@ public class TrainingGroupController {
 
         return ResponseEntity.ok(new TrainingGroupDTO(group));
     }
-
 }

@@ -63,9 +63,6 @@ public class InvoiceDTO {
         return invoice;
     }
 
-    // Getters y setters (puedes generarlos automáticamente)
-
-
     public Integer getId() {
         return id;
     }

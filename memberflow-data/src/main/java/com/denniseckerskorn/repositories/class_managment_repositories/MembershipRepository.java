@@ -8,6 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 
+/**
+ * Repository interface for managing Membership entities.
+ * Provides methods to find memberships by various attributes.
+ */
 public interface MembershipRepository extends JpaRepository<Membership, Integer> {
     Membership findByType(MembershipTypeValues type);
 

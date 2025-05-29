@@ -14,27 +14,53 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Security configuration class for the application.
+ */
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Constructor for SecurityConfig.
+     *
+     * @param jwtAuthFilter            the JWT authentication filter
+     * @param customUserDetailsService the custom user details service
+     */
     public SecurityConfig(JwtAuthFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Bean for PasswordEncoder.
+     *
+     * @return a BCryptPasswordEncoder instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Bean for CustomUserDetailsService.
+     *
+     * @return the custom user details service
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Bean for SecurityFilterChain.
+     *
+     * @param http the HttpSecurity object
+     * @return a SecurityFilterChain instance
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http

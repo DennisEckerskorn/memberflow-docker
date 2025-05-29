@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service class for managing Payment entities.
+ * This class provides methods to perform CRUD operations on Payment entities.
+ */
 @Service
 public class PaymentService extends AbstractService<Payment, Integer> {
 
@@ -24,12 +28,27 @@ public class PaymentService extends AbstractService<Payment, Integer> {
     private final PaymentRepository paymentRepository;
     private final InvoiceService invoiceService;
 
+    /**
+     * Constructor for PaymentService.
+     *
+     * @param paymentRepository the repository for Payment entities
+     * @param invoiceService    the service for Invoice entities
+     */
     public PaymentService(PaymentRepository paymentRepository, InvoiceService invoiceService) {
         super(paymentRepository);
         this.paymentRepository = paymentRepository;
         this.invoiceService = invoiceService;
     }
 
+    /**
+     * Saves a new Payment entity.
+     *
+     * @param payment the payment to save
+     * @return the saved payment
+     * @throws DuplicateEntityException if a payment already exists for the invoice
+     * @throws EntityNotFoundException  if the associated invoice does not exist
+     * @throws InvalidDataException     if the payment data is invalid
+     */
     @Override
     @Transactional
     public Payment save(Payment payment) throws DuplicateEntityException {
@@ -50,14 +69,20 @@ public class PaymentService extends AbstractService<Payment, Integer> {
 
         Payment savedPayment = super.save(payment);
 
-        //invoice.setPayment(savedPayment);
         invoice.setStatus(StatusValues.PAID);
         invoiceService.update(invoice);
 
         return savedPayment;
     }
 
-
+    /**
+     * Updates an existing Payment entity.
+     *
+     * @param payment the entity to update
+     * @return the updated payment
+     * @throws EntityNotFoundException if the payment does not exist
+     * @throws InvalidDataException    if the payment data is invalid
+     */
     @Override
     @Transactional
     public Payment update(Payment payment) throws EntityNotFoundException, InvalidDataException {
@@ -82,22 +107,44 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         return super.update(payment);
     }
 
+    /**
+     * Verifies if a Payment entity exists in the database.
+     *
+     * @param entity the entity to check
+     * @return true if the entity exists, false otherwise
+     */
     @Override
     protected boolean exists(Payment entity) {
         return entity != null && entity.getId() != null && paymentRepository.existsById(entity.getId());
     }
 
+    /**
+     * Obtains the ID of a Payment entity.
+     *
+     * @param entity the entity from which to retrieve the ID
+     * @return the ID of the Payment entity
+     */
     @Override
     protected Integer getEntityId(Payment entity) {
         return entity.getId();
     }
 
+    /**
+     * Obtains all Payment entities.
+     *
+     * @return a list of all Payment entities
+     */
     @Override
     public List<Payment> findAll() {
         logger.info("Retrieving all payments");
         return super.findAll();
     }
 
+    /**
+     * Validates the Payment entity before saving or updating.
+     *
+     * @param payment the Payment to validate
+     */
     private void validate(Payment payment) {
         if (payment.getInvoice() == null) {
             throw new InvalidDataException("Payment must be linked to an invoice");
@@ -116,6 +163,11 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         }
     }
 
+    /**
+     * Removes a Payment entity by its ID.
+     *
+     * @param paymentId the ID of the payment to remove
+     */
     @Transactional
     public void removePayment(Integer paymentId) {
         Payment payment = findById(paymentId);
@@ -131,10 +183,22 @@ public class PaymentService extends AbstractService<Payment, Integer> {
         invoiceService.update(invoice);
     }
 
+    /**
+     * Finds all Payment entities associated with a specific user ID.
+     *
+     * @param userId the ID of the user
+     * @return a list of payments associated with the user
+     */
     public List<Payment> findAllByUserId(Integer userId) {
         return paymentRepository.findByInvoice_User_Id(userId);
     }
 
+    /**
+     * Retrieves an Invoice by its ID.
+     *
+     * @param id the ID of the invoice
+     * @return the Invoice entity
+     */
     public Invoice getInvoiceById(Integer id) {
         return invoiceService.findById(id);
     }

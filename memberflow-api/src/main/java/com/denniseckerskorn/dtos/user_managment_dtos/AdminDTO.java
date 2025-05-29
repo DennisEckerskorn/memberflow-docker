@@ -30,8 +30,6 @@ public class AdminDTO {
         this.user = user;
     }
 
-    // ------------ Métodos de conversión ------------
-
     public static AdminDTO fromEntity(Admin admin) {
         if (admin == null || admin.getUser() == null) {
             return null;

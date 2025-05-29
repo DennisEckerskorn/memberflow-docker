@@ -24,10 +24,21 @@ public class MembershipController {
 
     private final MembershipService membershipService;
 
+    /**
+     * Constructor for MembershipController.
+     *
+     * @param membershipService Service for handling membership records.
+     */
     public MembershipController(MembershipService membershipService) {
         this.membershipService = membershipService;
     }
 
+    /**
+     * Creates a new membership.
+     *
+     * @param membershipDTO The MembershipDTO containing the details of the membership to be created.
+     * @return ResponseEntity containing the created MembershipDTO.
+     */
     @Operation(summary = "Create a new membership")
     @PostMapping("/create")
     public ResponseEntity<MembershipDTO> createMembership(@RequestBody MembershipDTO membershipDTO) {
@@ -36,6 +47,11 @@ public class MembershipController {
         return ResponseEntity.status(HttpStatus.CREATED).body(MembershipDTO.fromEntity(savedMembership));
     }
 
+    /**
+     * Retrieves all memberships.
+     *
+     * @return ResponseEntity containing a list of MembershipDTOs.
+     */
     @Operation(summary = "Get all memberships", description = "Retrieve a list of all memberships")
     @GetMapping("/getAll")
     public ResponseEntity<List<MembershipDTO>> getAllMemberships() {
@@ -49,6 +65,12 @@ public class MembershipController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Retrieves a membership by its ID.
+     *
+     * @param id The ID of the membership to retrieve.
+     * @return ResponseEntity containing the MembershipDTO if found, or 404 Not Found if not found.
+     */
     @Operation(summary = "Get a membership by ID", description = "Retrieve a membership by its ID")
     @GetMapping("/getById/{id}")
     public ResponseEntity<MembershipDTO> getMembershipById(@PathVariable Integer id) {
@@ -56,6 +78,13 @@ public class MembershipController {
         return ResponseEntity.ok(MembershipDTO.fromEntity(membership));
     }
 
+    /**
+     * Updates an existing membership.
+     *
+     * @param id  The ID of the membership to update.
+     * @param dto The MembershipDTO containing the updated details of the membership.
+     * @return ResponseEntity containing the updated MembershipDTO.
+     */
     @Operation(summary = "Update a membership", description = "Update an existing membership")
     @Transactional
     @PutMapping("/update/{id}")
@@ -65,6 +94,12 @@ public class MembershipController {
         return ResponseEntity.ok(MembershipDTO.fromEntity(updated));
     }
 
+    /**
+     * Deletes a membership by its ID.
+     *
+     * @param id The ID of the membership to delete.
+     * @return ResponseEntity indicating the result of the deletion operation.
+     */
     @Operation(summary = "Delete a membership", description = "Delete a membership by its ID")
     @Transactional
     @DeleteMapping("/delete/{id}")

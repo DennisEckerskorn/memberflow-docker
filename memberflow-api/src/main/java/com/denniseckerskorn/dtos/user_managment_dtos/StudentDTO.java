@@ -109,8 +109,6 @@ public class StudentDTO {
         return student;
     }
 
-    // Getters y Setters...
-
     public Integer getId() {
         return id;
     }

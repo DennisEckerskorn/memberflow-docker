@@ -156,6 +156,13 @@ public class UserService extends AbstractService<User, Integer> {
         return userRepository.existsByEmail(email);
     }
 
+    /**
+     * Adds an invoice to a user.
+     *
+     * @param user    the user to whom the invoice will be added
+     * @param invoice the invoice to add
+     * @throws InvalidDataException if the user or invoice is null
+     */
     @Transactional
     public void addInvoiceToUser(User user, Invoice invoice) throws InvalidDataException {
         if (user == null || invoice == null) {
@@ -167,6 +174,13 @@ public class UserService extends AbstractService<User, Integer> {
         userRepository.save(user);
     }
 
+    /**
+     * Removes an invoice from a user.
+     *
+     * @param user    the user from whom the invoice will be removed
+     * @param invoice the invoice to remove
+     * @throws InvalidDataException if the user or invoice is null
+     */
     @Transactional
     public void removeInvoiceFromUser(User user, Invoice invoice) throws InvalidDataException {
         if (user == null || invoice == null) {

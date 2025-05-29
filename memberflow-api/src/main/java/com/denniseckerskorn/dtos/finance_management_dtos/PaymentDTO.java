@@ -67,10 +67,6 @@ public class PaymentDTO {
         return payment;
     }
 
-
-    // Getters y setters...
-
-
     public Integer getId() {
         return id;
     }

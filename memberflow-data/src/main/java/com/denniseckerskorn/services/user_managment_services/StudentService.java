@@ -34,7 +34,9 @@ public class StudentService extends AbstractService<Student, Integer> {
     /**
      * Constructor for StudentService.
      *
-     * @param studentRepository the student repository
+     * @param studentRepository    the student repository
+     * @param userRepository       the user repository
+     * @param assistanceRepository the assistance repository
      */
     public StudentService(StudentRepository studentRepository, UserRepository userRepository, AssistanceRepository assistanceRepository) {
         super(studentRepository);

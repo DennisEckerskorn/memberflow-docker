@@ -67,6 +67,14 @@ public class NotificationService extends AbstractService<Notification, Integer> 
         return super.findById(id);
     }
 
+    /**
+     * Updates an existing notification.
+     *
+     * @param entity the notification to update
+     * @return the updated notification
+     * @throws EntityNotFoundException if the notification is not found
+     * @throws InvalidDataException    if the entity data is invalid
+     */
     @Transactional
     @Override
     public Notification update(Notification entity) throws EntityNotFoundException {

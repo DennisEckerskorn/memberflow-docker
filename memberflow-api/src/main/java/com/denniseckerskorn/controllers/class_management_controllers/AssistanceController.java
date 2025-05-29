@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * AssistanceController handles requests related to assistance management.
+ * It provides endpoints for creating, updating, retrieving, and deleting assistance records.
+ */
 @RestController
 @RequestMapping("/api/v1/assistances")
 @Tag(name = "Assistance Management", description = "Operations related to assistance management")
@@ -26,6 +30,13 @@ public class AssistanceController {
     private final StudentService studentService;
     private final TrainingSessionService trainingSessionService;
 
+    /**
+     * Constructor for AssistanceController.
+     *
+     * @param assistanceService      Service for handling assistance records.
+     * @param studentService         Service for handling student records.
+     * @param trainingSessionService Service for handling training session records.
+     */
     public AssistanceController(
             AssistanceService assistanceService,
             StudentService studentService,
@@ -36,6 +47,12 @@ public class AssistanceController {
         this.trainingSessionService = trainingSessionService;
     }
 
+    /**
+     * Creates a new assistance record.
+     *
+     * @param dto The AssistanceDTO containing the details of the assistance to be created.
+     * @return ResponseEntity containing the created AssistanceDTO.
+     */
     @Operation(summary = "Create a new assistance record")
     @PostMapping("/create")
     public ResponseEntity<AssistanceDTO> create(@RequestBody AssistanceDTO dto) {
@@ -52,7 +69,12 @@ public class AssistanceController {
         return ResponseEntity.ok(AssistanceDTO.fromEntity(saved));
     }
 
-
+    /**
+     * Updates an existing assistance record.
+     *
+     * @param dto The AssistanceDTO containing the updated details of the assistance.
+     * @return ResponseEntity containing the updated AssistanceDTO.
+     */
     @Operation(summary = "Update an existing assistance record", description = "Update an existing assistance record")
     @PutMapping("/update")
     public ResponseEntity<AssistanceDTO> update(@RequestBody AssistanceDTO dto) {
@@ -64,6 +86,11 @@ public class AssistanceController {
         return ResponseEntity.ok(AssistanceDTO.fromEntity(updated));
     }
 
+    /**
+     * Retrieves all assistance records.
+     *
+     * @return ResponseEntity containing a list of AssistanceDTOs.
+     */
     @Operation(summary = "Get all assistance records", description = "Retrieve a list of all assistance records")
     @GetMapping("/getAll")
     public ResponseEntity<List<AssistanceDTO>> getAll() {
@@ -74,6 +101,12 @@ public class AssistanceController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * Retrieves assistance records by student ID.
+     *
+     * @param id The ID of the student whose assistance records are to be retrieved.
+     * @return ResponseEntity containing a list of AssistanceDTOs for the specified student.
+     */
     @Operation(summary = "Get assistance records by student ID", description = "Retrieve assistance records for a specific student")
     @GetMapping("/getById/{id}")
     public ResponseEntity<AssistanceDTO> getAssistanceById(@PathVariable Integer id) {
@@ -81,6 +114,12 @@ public class AssistanceController {
         return ResponseEntity.ok(AssistanceDTO.fromEntity(assistance));
     }
 
+    /**
+     * Deletes an assistance record by ID.
+     *
+     * @param id The ID of the assistance record to be deleted.
+     * @return ResponseEntity indicating the result of the deletion operation.
+     */
     @Operation(summary = "Delete an assistance record by ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

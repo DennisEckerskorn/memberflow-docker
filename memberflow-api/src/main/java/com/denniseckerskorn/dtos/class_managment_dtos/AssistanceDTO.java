@@ -1,6 +1,5 @@
 package com.denniseckerskorn.dtos.class_managment_dtos;
 
-
 import com.denniseckerskorn.entities.class_managment.Assistance;
 import com.denniseckerskorn.entities.class_managment.TrainingSession;
 import com.denniseckerskorn.entities.user_managment.users.Student;

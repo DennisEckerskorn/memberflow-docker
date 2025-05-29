@@ -16,10 +16,7 @@ public class TeacherDTO {
         this.user = user;
         this.discipline = discipline;
     }
-
-    // Getters y Setters
-
-
+    
     public Integer getId() {
         return id;
     }

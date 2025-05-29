@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Service class for managing ProductService entities.
+ * This class provides methods to perform CRUD operations on ProductService entities.
+ */
 @Service
 public class ProductServiceService extends AbstractService<ProductService, Integer> {
 
@@ -22,12 +26,26 @@ public class ProductServiceService extends AbstractService<ProductService, Integ
     private final ProductServiceRepository productServiceRepository;
     private final IVATypeService ivaTypeService;
 
+    /**
+     * Constructor for ProductServiceService.
+     *
+     * @param productServiceRepository the repository for ProductService entities
+     * @param ivaTypeService           the service for IVAType entities
+     */
     public ProductServiceService(ProductServiceRepository productServiceRepository, IVATypeService ivaTypeService) {
         super(productServiceRepository);
         this.productServiceRepository = productServiceRepository;
         this.ivaTypeService = ivaTypeService;
     }
 
+    /**
+     * Saves a new ProductService entity.
+     *
+     * @param entity the product/service to save
+     * @return the saved product/service
+     * @throws IllegalArgumentException if the product/service is invalid
+     * @throws DuplicateEntityException if a product/service with the same name already exists
+     */
     @Override
     @Transactional
     public ProductService save(ProductService entity) throws IllegalArgumentException, DuplicateEntityException {
@@ -51,6 +69,15 @@ public class ProductServiceService extends AbstractService<ProductService, Integ
     }
 
 
+    /**
+     * Updates an existing ProductService entity.
+     *
+     * @param entity the product/service to update
+     * @return the updated product/service
+     * @throws IllegalArgumentException if the product/service is invalid
+     * @throws InvalidDataException     if the product/service data is invalid
+     * @throws EntityNotFoundException  if the product/service does not exist
+     */
     @Override
     @Transactional
     public ProductService update(ProductService entity) throws IllegalArgumentException, InvalidDataException, EntityNotFoundException {
@@ -68,23 +95,44 @@ public class ProductServiceService extends AbstractService<ProductService, Integ
         return super.update(entity);
     }
 
-
+    /**
+     * Finds all ProductService entities.
+     *
+     * @return a list of all products/services
+     */
     @Override
     public List<ProductService> findAll() {
         logger.info("Retrieving all products/services");
         return super.findAll();
     }
 
+    /**
+     * Exists method to check if a ProductService entity exists in the repository.
+     *
+     * @param entity the entity to check
+     * @return true if the entity exists, false otherwise
+     */
     @Override
     protected boolean exists(ProductService entity) {
         return entity != null && entity.getId() != null && productServiceRepository.existsById(entity.getId());
     }
 
+    /**
+     * Gets the ID of a ProductService entity.
+     *
+     * @param entity the entity from which to retrieve the ID
+     * @return the ID of the ProductService entity
+     */
     @Override
     protected Integer getEntityId(ProductService entity) {
         return entity.getId();
     }
 
+    /**
+     * Validates the ProductService entity before saving or updating.
+     *
+     * @param product the ProductService to validate
+     */
     private void validateProduct(ProductService product) {
         if (product.getName() == null || product.getName().isBlank()) {
             throw new InvalidDataException("Product name cannot be null or blank");

@@ -45,13 +45,3 @@ services:
       - backend
     ports:
       - "3000:80"
-
-  db-restore:
-    image: mysql:8.0
-    depends_on:
-      mysql:
-        condition: service_healthy
-    volumes:
-      - ./backup.sql:/backup.sql
-      - ./docker/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
-    entrypoint: ["/bin/bash", "/docker-entrypoint-initdb.d/initdb.sh"]

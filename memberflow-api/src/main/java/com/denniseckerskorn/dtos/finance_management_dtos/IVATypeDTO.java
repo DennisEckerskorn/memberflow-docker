@@ -14,7 +14,8 @@ public class IVATypeDTO {
 
     private String description;
 
-    public IVATypeDTO() {}
+    public IVATypeDTO() {
+    }
 
     public IVATypeDTO(IVAType entity) {
         this.id = entity.getId();
@@ -33,9 +34,6 @@ public class IVATypeDTO {
         iva.setDescription(this.description);
         return iva;
     }
-
-    // Getters y setters...
-
 
     public Integer getId() {
         return id;

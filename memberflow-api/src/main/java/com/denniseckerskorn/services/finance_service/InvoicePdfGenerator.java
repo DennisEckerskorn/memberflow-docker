@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 
+/**
+ * InvoicePdfGenerator is a service that generates a PDF representation of an Invoice.
+ * It uses iText library to create the PDF document with invoice details.
+ */
 @Service
 public class InvoicePdfGenerator {
 
@@ -23,20 +27,20 @@ public class InvoicePdfGenerator {
         PdfDocument pdf = new PdfDocument(writer);
         Document doc = new Document(pdf);
 
-        // Cabecera
+        // Document title and metadata
         doc.add(new Paragraph("FACTURA #" + invoice.getId()).setFontSize(16).setBold());
         doc.add(new Paragraph("Fecha: " + invoice.getDate()));
         doc.add(new Paragraph("Estado: " + invoice.getStatus()));
         doc.add(new Paragraph(" "));
 
-        // Información del cliente
+        // Cliente information
         var user = invoice.getUser();
         doc.add(new Paragraph("Cliente: " + user.getName() + " " + user.getSurname()));
         doc.add(new Paragraph("Email: " + user.getEmail()));
         doc.add(new Paragraph("Teléfono: " + user.getPhoneNumber()));
         doc.add(new Paragraph("Dirección: " + user.getAddress()));
 
-        // Si es estudiante, mostrar info básica (sin tutor ni cinturón)
+        // Student information
         Student student = user.getStudent();
         if (student != null) {
             doc.add(new Paragraph("DNI: " + student.getDni()));
@@ -45,7 +49,7 @@ public class InvoicePdfGenerator {
 
         doc.add(new Paragraph(" "));
 
-        // Detalle de productos
+        // Products and services details
         doc.add(new Paragraph("Detalle de productos:").setBold());
         doc.add(new Paragraph("Producto | Cant. | Precio | IVA % | Subtotal (sin IVA) | IVA"));
 
@@ -74,7 +78,7 @@ public class InvoicePdfGenerator {
             ));
         }
 
-        // Totales
+        // Totals
         doc.add(new Paragraph(" "));
         doc.add(new Paragraph("Subtotal (sin IVA): " + totalSubtotal + " €").setBold());
         doc.add(new Paragraph("IVA total: " + totalIVA + " €").setBold());

@@ -20,7 +20,6 @@ public class NotificationMiniDTO {
         this.type = type;
     }
 
-    // Getters y setters
     public Integer getId() {
         return id;
     }

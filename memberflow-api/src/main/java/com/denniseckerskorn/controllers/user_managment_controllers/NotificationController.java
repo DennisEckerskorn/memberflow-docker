@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * NotificationController handles requests related to notification management.
+ * It provides endpoints for creating, retrieving, updating, and deleting notifications.
+ */
 @RestController
 @RequestMapping("/api/v1/notifications")
 @Tag(name = "Notification Management", description = "Operations related to notifications")
@@ -23,11 +27,22 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final UserService userService;
 
+    /**
+     * Constructor for NotificationController.
+     *
+     * @param notificationService Service for handling notification records.
+     * @param userService         Service for handling user records.
+     */
     public NotificationController(NotificationService notificationService, UserService userService) {
         this.notificationService = notificationService;
         this.userService = userService;
     }
 
+    /**
+     * Gets all notifications and returns them as a list of DTOs.
+     *
+     * @return ResponseEntity containing a list of NotificationDTOs or no content if none found.
+     */
     @Operation(summary = "Get all notifications", description = "Retrieve a list of all notifications")
     @GetMapping("/getAll")
     public ResponseEntity<List<NotificationDTO>> getAll() {
@@ -38,6 +53,12 @@ public class NotificationController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Gets a notification by its ID and returns it as a DTO.
+     *
+     * @param id The ID of the notification to find.
+     * @return ResponseEntity containing the NotificationDTO or not found if it doesn't exist.
+     */
     @Operation(summary = "Get a notification by ID", description = "Retrieve a notification by its ID")
     @GetMapping("/getById/{id}")
     public ResponseEntity<NotificationDTO> getById(@PathVariable Integer id) {
@@ -45,6 +66,12 @@ public class NotificationController {
         return ResponseEntity.ok(toDTO(notification));
     }
 
+    /**
+     * Creates a new notification.
+     *
+     * @param dto The NotificationDTO containing the details of the notification to be created.
+     * @return ResponseEntity containing the created NotificationDTO.
+     */
     @Operation(summary = "Create a new notification", description = "Create a new notification")
     @PostMapping("/create")
     public ResponseEntity<NotificationDTO> create(@RequestBody NotificationDTO dto) {
@@ -57,11 +84,16 @@ public class NotificationController {
                 notificationService.addNotificationToUser(saved, user);
             }
         }
-
         return ResponseEntity.status(201).body(toDTO(saved));
     }
 
-
+    /**
+     * Updates an existing notification by its ID.
+     *
+     * @param id  The ID of the notification to update.
+     * @param dto The NotificationDTO containing the updated details of the notification.
+     * @return ResponseEntity containing the updated NotificationDTO.
+     */
     @Operation(summary = "Update a notification by ID", description = "Update a notification by its ID")
     @PutMapping("/update/{id}")
     public ResponseEntity<NotificationDTO> update(@PathVariable Integer id, @RequestBody NotificationDTO dto) {
@@ -87,7 +119,12 @@ public class NotificationController {
         return ResponseEntity.ok(toDTO(updated));
     }
 
-
+    /**
+     * Deletes a notification by its ID.
+     *
+     * @param id The ID of the notification to delete.
+     * @return ResponseEntity with a message indicating successful deletion.
+     */
     @Operation(summary = "Delete a notification by ID", description = "Delete a notification by its ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
@@ -95,8 +132,14 @@ public class NotificationController {
         return ResponseEntity.ok("Notification deleted successfully.");
     }
 
-    // -------------------- Mapping --------------------
+    /* -------------------- Utils -------------------- */
 
+    /**
+     * Converts a Notification entity to a NotificationDTO.
+     *
+     * @param notification The Notification entity to convert.
+     * @return The converted NotificationDTO.
+     */
     private NotificationDTO toDTO(Notification notification) {
         Set<Integer> userIds = notification.getUsers() != null
                 ? notification.getUsers().stream().map(User::getId).collect(Collectors.toSet())
@@ -113,6 +156,13 @@ public class NotificationController {
         );
     }
 
+    /**
+     * Converts a NotificationDTO to a Notification entity.
+     *
+     * @param dto          The NotificationDTO to convert.
+     * @param includeUsers Whether to include users in the conversion.
+     * @return The converted Notification entity.
+     */
     private Notification toEntity(NotificationDTO dto, boolean includeUsers) {
         Notification notification = (dto.getId() != null)
                 ? notificationService.findById(dto.getId())
@@ -126,5 +176,4 @@ public class NotificationController {
 
         return notification;
     }
-
 }

@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * StudentHistoryController handles requests related to student history management.
+ * It provides endpoints for creating, retrieving, updating, and deleting student histories.
+ */
 @RestController
 @RequestMapping("/api/v1/student-history")
 @Tag(name = "Student History Management", description = "Operations related to student history")
@@ -21,11 +25,22 @@ public class StudentHistoryController {
     private final StudentHistoryService studentHistoryService;
     private final StudentService studentService;
 
+    /**
+     * Constructor for StudentHistoryController.
+     *
+     * @param studentHistoryService Service for handling student history records.
+     * @param studentService        Service for handling student records.
+     */
     public StudentHistoryController(StudentHistoryService studentHistoryService, StudentService studentService) {
         this.studentHistoryService = studentHistoryService;
         this.studentService = studentService;
     }
 
+    /**
+     * Retrieves all student histories and returns them as a list of DTOs.
+     *
+     * @return ResponseEntity containing a list of StudentHistoryDTOs or no content if none found.
+     */
     @Operation(summary = "Get all student histories", description = "Retrieve a list of all student histories")
     @GetMapping("/getAll")
     public ResponseEntity<List<StudentHistoryDTO>> getAll() {
@@ -36,6 +51,12 @@ public class StudentHistoryController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Retrieves a student history by its ID and returns it as a DTO.
+     *
+     * @param id The ID of the student history to find.
+     * @return ResponseEntity containing the StudentHistoryDTO or not found if it doesn't exist.
+     */
     @Operation(summary = "find student history by ID", description = "Retrieve a student history by its ID")
     @GetMapping("/findById/{id}")
     public ResponseEntity<StudentHistoryDTO> findById(@PathVariable Integer id) {
@@ -43,6 +64,12 @@ public class StudentHistoryController {
         return ResponseEntity.ok(toDTO(history));
     }
 
+    /**
+     * Creates a new student history and returns the created history as a DTO.
+     *
+     * @param dto The StudentHistoryDTO containing the details of the history to be created.
+     * @return ResponseEntity containing the created StudentHistoryDTO.
+     */
     @Operation(summary = "Create a new student history", description = "Create a new student history")
     @PostMapping("/create")
     public ResponseEntity<StudentHistoryDTO> create(@RequestBody StudentHistoryDTO dto) {
@@ -51,6 +78,13 @@ public class StudentHistoryController {
         return ResponseEntity.status(201).body(toDTO(saved));
     }
 
+    /**
+     * Updates an existing student history and returns the updated history as a DTO.
+     *
+     * @param id  The ID of the student history to update.
+     * @param dto The StudentHistoryDTO containing the updated details.
+     * @return ResponseEntity containing the updated StudentHistoryDTO.
+     */
     @Operation(summary = "Update an existing student history", description = "Update an existing student history")
     @PutMapping("/update/{id}")
     public ResponseEntity<StudentHistoryDTO> update(@PathVariable Integer id, @RequestBody StudentHistoryDTO dto) {
@@ -60,6 +94,12 @@ public class StudentHistoryController {
         return ResponseEntity.ok(toDTO(updated));
     }
 
+    /**
+     * Deletes a student history by its ID.
+     *
+     * @param id The ID of the student history to delete.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Delete a student history", description = "Delete a student history by its ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
@@ -67,8 +107,14 @@ public class StudentHistoryController {
         return ResponseEntity.ok("Student history deleted successfully.");
     }
 
-    // -------------------- Mapping --------------------
+    /* -------------------- Utils -------------------- */
 
+    /**
+     * Converts a StudentHistory entity to a StudentHistoryDTO.
+     *
+     * @param history The StudentHistory entity to convert.
+     * @return The converted StudentHistoryDTO.
+     */
     private StudentHistoryDTO toDTO(StudentHistory history) {
         return new StudentHistoryDTO(
                 history.getId(),
@@ -79,6 +125,13 @@ public class StudentHistoryController {
         );
     }
 
+    /**
+     * Converts a StudentHistoryDTO to a StudentHistory entity.
+     *
+     * @param dto                    The StudentHistoryDTO to convert.
+     * @param includeExistingStudent Whether to include the existing student in the history.
+     * @return The converted StudentHistory entity.
+     */
     private StudentHistory toEntity(StudentHistoryDTO dto, boolean includeExistingStudent) {
         StudentHistory history = (dto.getId() != null)
                 ? studentHistoryService.findById(dto.getId())

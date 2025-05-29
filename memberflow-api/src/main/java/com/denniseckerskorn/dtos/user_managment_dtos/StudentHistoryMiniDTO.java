@@ -18,7 +18,6 @@ public class StudentHistoryMiniDTO {
         this.description = description;
     }
 
-    // Getters y setters
     public Integer getId() {
         return id;
     }

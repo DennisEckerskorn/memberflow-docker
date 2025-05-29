@@ -38,15 +38,30 @@ public class UserController {
     private final RoleService roleService;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Password encoder for encoding passwords.
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructor for UserController.
+     *
+     * @param userService Service for handling user records.
+     * @param roleService Service for handling roles.
+     * @param jwtUtil     Utility for JWT operations.
+     */
     public UserController(UserService userService, RoleService roleService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.roleService = roleService;
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Gets all users and returns them as a list of DTOs.
+     *
+     * @return ResponseEntity containing a list of UserDTOs or no content if none found.
+     */
     @Operation(summary = "Get all users", description = "Retrieve a list of all users")
     @GetMapping("/getAll")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -62,6 +77,12 @@ public class UserController {
         return ResponseEntity.ok(userDTOs);
     }
 
+    /**
+     * Finds a user by their ID and returns it as a DTO.
+     *
+     * @param id The ID of the user to find.
+     * @return ResponseEntity containing the UserDTO or not found if the ID does not exist.
+     */
     @Operation(summary = "Find a User by ID", description = "Retrieve a user by their ID")
     @GetMapping("/getById/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
@@ -69,7 +90,13 @@ public class UserController {
         return ResponseEntity.ok(convertToDTO(user));
     }
 
-    @Operation( summary = "Find a User by email", description = "Retrieve a user by their email")
+    /**
+     * Creates a new user and returns the created user as a DTO.
+     *
+     * @param userDTO The UserDTO containing the details of the user to be created.
+     * @return ResponseEntity containing the created UserDTO with status 201 Created.
+     */
+    @Operation(summary = "Create a new User", description = "Create a new user")
     @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         User user = convertToEntity(userDTO, true);
@@ -77,6 +104,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(saved));
     }
 
+    /**
+     * Updates an existing user by ID and returns the updated user as a DTO.
+     *
+     * @param id      The ID of the user to update.
+     * @param userDTO The UserDTO containing the updated details of the user.
+     * @return ResponseEntity containing the updated UserDTO.
+     */
     @Operation(summary = "Update a user by ID", description = "Update an existing user")
     @PutMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO) {
@@ -86,13 +120,25 @@ public class UserController {
         return ResponseEntity.ok(convertToDTO(updated));
     }
 
-    @Operation(summary = "Update a user by email", description = "Update an existing user")
+    /**
+     * Deletes a user by ID.
+     *
+     * @param id The ID of the user to delete.
+     * @return ResponseEntity with a success message.
+     */
+    @Operation(summary = "Delete User by Id", description = "Delete a user by ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
         userService.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
 
+    /**
+     * Retrieves the currently authenticated user based on the JWT token from the request.
+     *
+     * @param request The HTTP request containing the JWT token.
+     * @return ResponseEntity containing the UserDTO of the current user.
+     */
     @Operation(summary = "Get current user", description = "Retrieve the currently authenticated user")
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser(HttpServletRequest request) {
@@ -103,8 +149,15 @@ public class UserController {
         return ResponseEntity.ok(convertToDTO(user));
     }
 
-    // ------------------ UTILS ------------------
+    /* ------------------ UTILS ------------------ */
 
+    /**
+     * Extracts the JWT token from the Authorization header of the request.
+     *
+     * @param request The HTTP request containing the Authorization header.
+     * @return The extracted JWT token.
+     * @throws InvalidDataException if the Authorization header is missing or invalid.
+     */
     private String extractTokenFromRequest(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -113,6 +166,12 @@ public class UserController {
         return authHeader.substring(7); // Remove "Bearer "
     }
 
+    /**
+     * Converts a User entity to a UserDTO.
+     *
+     * @param user The User entity to convert.
+     * @return The converted UserDTO.
+     */
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO(
                 user.getId(),
@@ -156,6 +215,12 @@ public class UserController {
         return dto;
     }
 
+    /**
+     * Converts a Notification entity to a NotificationMiniDTO.
+     *
+     * @param notification The Notification entity to convert.
+     * @return The converted NotificationMiniDTO.
+     */
     private NotificationMiniDTO convertNotificationToMiniDTO(Notification notification) {
         return new NotificationMiniDTO(
                 notification.getId(),
@@ -166,6 +231,14 @@ public class UserController {
         );
     }
 
+    /**
+     * Converts a UserDTO to a User entity.
+     *
+     * @param dto      The UserDTO to convert.
+     * @param isCreate Indicates if the conversion is for creation (true) or update (false).
+     * @return The converted User entity.
+     * @throws InvalidDataException if the provided data is invalid.
+     */
     private User convertToEntity(UserDTO dto, boolean isCreate) {
         User user;
 

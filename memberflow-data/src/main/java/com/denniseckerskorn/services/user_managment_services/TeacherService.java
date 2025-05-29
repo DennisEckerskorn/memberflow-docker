@@ -33,6 +33,7 @@ public class TeacherService extends AbstractService<Teacher, Integer> {
      * Constructor for TeacherService.
      *
      * @param teacherRepository the teacher repository
+     * @param userRepository    the user repository
      */
     public TeacherService(TeacherRepository teacherRepository, UserRepository userRepository) {
         super(teacherRepository);

@@ -20,8 +20,6 @@ public class UserDTO {
     private LocalDateTime registerDate;
     private String roleName;
     private StatusValues status;
-
-    // 🔥 Nuevos campos para el perfil completo
     private Set<NotificationMiniDTO> notifications;
     private StudentMiniDTO student;
 
@@ -54,8 +52,6 @@ public class UserDTO {
         this.status = user.getStatus();
     }
 
-
-    // Getters y Setters
     public Integer getId() {
         return id;
     }
@@ -152,7 +148,6 @@ public class UserDTO {
         this.student = student;
     }
 
-    // Conversión (opcional)
     public static UserDTO fromEntity(User user) {
         if (user == null) return null;
 

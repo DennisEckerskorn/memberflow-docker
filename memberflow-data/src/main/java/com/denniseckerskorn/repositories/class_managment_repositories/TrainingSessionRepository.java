@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing TrainingSession entities.
+ * Provides methods to find training sessions by date and date range.
+ */
 public interface TrainingSessionRepository extends JpaRepository<TrainingSession, Integer> {
     TrainingSession findByDate(LocalDateTime date);
 

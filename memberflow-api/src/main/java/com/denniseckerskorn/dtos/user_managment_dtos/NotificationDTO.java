@@ -14,7 +14,8 @@ public class NotificationDTO {
     private StatusValues status;
     private Set<Integer> userIds;
 
-    public NotificationDTO() {}
+    public NotificationDTO() {
+    }
 
     public NotificationDTO(Integer id, String title, String message, LocalDateTime shippingDate, String type, StatusValues status, Set<Integer> userIds) {
         this.id = id;

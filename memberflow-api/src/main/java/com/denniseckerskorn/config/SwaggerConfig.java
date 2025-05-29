@@ -8,9 +8,18 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Swagger configuration class for the MemberFlow API.
+ * This class sets up the OpenAPI documentation for the API, including security schemes and metadata.
+ */
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Configures the OpenAPI documentation for the MemberFlow API.
+     *
+     * @return an OpenAPI instance with the API information and security scheme.
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
@@ -20,12 +29,12 @@ public class SwaggerConfig {
                         .title("MemberFlow API")
                         .version("1.0.0")
                         .description("""
-                            Documentación de la API de MemberFlow.
-                            **Usuarios de prueba:**
-                            - Admin: admin@example.com / admin123
-                            - Teacher: teacher@example.com / 123456789
-                            - Student: student@example.com / 12345678
-                            """)
+                                Documentación de la API de MemberFlow.
+                                **Usuarios de prueba:**
+                                - Admin: admin@example.com / admin123
+                                - Teacher: teacher@example.com / 123456789
+                                - Student: student@example.com / 12345678
+                                """)
                 )
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()

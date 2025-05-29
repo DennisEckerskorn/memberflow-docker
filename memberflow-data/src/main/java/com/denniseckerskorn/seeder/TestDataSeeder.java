@@ -33,6 +33,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * TestDataSeeder is a component that seeds the database with initial test data
+ * when the application starts in the "dev" profile.
+ * It creates roles, permissions, users, memberships, training groups, sessions,
+ * and other entities to facilitate development and testing.
+ */
 @Component
 @Profile("dev")
 public class TestDataSeeder implements CommandLineRunner {
@@ -58,7 +64,27 @@ public class TestDataSeeder implements CommandLineRunner {
     private final ProductServiceService productServiceService;
     private final PaymentService paymentService;
 
-
+    /**
+     * Constructor for TestDataSeeder.
+     *
+     * @param adminService           Service for managing admin entities.
+     * @param notificationService    Service for managing notifications.
+     * @param permissionService      Service for managing permissions.
+     * @param roleService            Service for managing roles.
+     * @param studentHistoryService  Service for managing student history.
+     * @param studentService         Service for managing student entities.
+     * @param teacherService         Service for managing teacher entities.
+     * @param userService            Service for managing user entities.
+     * @param membershipService      Service for managing memberships.
+     * @param assistanceService      Service for managing assistance records.
+     * @param trainingGroupService   Service for managing training groups.
+     * @param trainingSessionService Service for managing training sessions.
+     * @param invoiceService         Service for managing invoices.
+     * @param invoiceLineService     Service for managing invoice lines.
+     * @param ivaTypeService         Service for managing IVA types.
+     * @param productServiceService  Service for managing product/services.
+     * @param paymentService         Service for managing payments.
+     */
     @Autowired
     public TestDataSeeder(AdminService adminService,
                           NotificationService notificationService,
@@ -96,6 +122,14 @@ public class TestDataSeeder implements CommandLineRunner {
         this.paymentService = paymentService;
     }
 
+    /**
+     * This method is executed when the application starts.
+     * It seeds the database with initial data for roles, permissions, users,
+     * memberships, training groups, sessions, and other entities.
+     *
+     * @param args command line arguments
+     * @throws Exception if an error occurs during seeding
+     */
     @Override
     public void run(String... args) throws Exception {
         // Roles
@@ -111,32 +145,30 @@ public class TestDataSeeder implements CommandLineRunner {
         adminRole.setName("ROLE_ADMIN");
         this.roleService.save(adminRole);
 
-        // Permisos
+        // Permissions
         for (PermissionValues value : PermissionValues.values()) {
             Permission p = new Permission();
             p.setPermissionName(value);
             this.permissionService.save(p);
         }
 
-        // Obtener permisos de la base de datos
+        // Obtain permissions
         Permission fullAccess = this.permissionService.findPermissionByName(PermissionValues.FULL_ACCESS);
         Permission manageUsers = this.permissionService.findPermissionByName(PermissionValues.MANAGE_STUDENTS);
         Permission viewOwnData = this.permissionService.findPermissionByName(PermissionValues.VIEW_OWN_DATA);
 
-        // Asignar permisos a roles
+        // Assign permissions to roles
         studentRole.addPermission(viewOwnData);
         teacherRole.addPermission(manageUsers);
         teacherRole.addPermission(viewOwnData);
         adminRole.addPermission(fullAccess);
 
-
-        // Guardar roles actualizados
+        // Update roles with permissions
         this.roleService.update(studentRole);
         this.roleService.update(teacherRole);
         this.roleService.update(adminRole);
 
-
-        // Membresías
+        // Memberships
         Membership basicMembership = new Membership();
         basicMembership.setType(MembershipTypeValues.BASIC);
         basicMembership.setStartDate(LocalDate.now());
@@ -165,7 +197,7 @@ public class TestDataSeeder implements CommandLineRunner {
         noLimitMembership.setStatus(StatusValues.ACTIVE);
         this.membershipService.save(noLimitMembership);
 
-        // Usuarios
+        // Users and their roles
         User studentUser = new User();
         studentUser.setName("Student");
         studentUser.setSurname("One");
@@ -177,7 +209,6 @@ public class TestDataSeeder implements CommandLineRunner {
         studentUser.setAddress("Calle Estudiante 123");
         studentUser.setRole(studentRole);
         this.userService.save(studentUser);
-
 
         Student student = new Student();
         student.setUser(studentUser);
@@ -210,7 +241,6 @@ public class TestDataSeeder implements CommandLineRunner {
         teacherUser.setRole(teacherRole);
         this.userService.save(teacherUser);
 
-
         Teacher teacher = new Teacher();
         teacher.setUser(teacherUser);
         teacher.setDiscipline("Jiu-Jitsu");
@@ -227,7 +257,6 @@ public class TestDataSeeder implements CommandLineRunner {
         adminUser.setAddress("Central");
         adminUser.setRole(adminRole);
         this.userService.save(adminUser);
-
 
         Admin admin = new Admin();
         admin.setUser(adminUser);
@@ -246,32 +275,31 @@ public class TestDataSeeder implements CommandLineRunner {
         notification.addUser(adminUser);
         this.notificationService.update(notification);
 
-        // Grupo de entrenamiento
+        // Create a training group
         TrainingGroup trainingGroup = new TrainingGroup();
         trainingGroup.setName("Grupo JiuJitsu Avanzado");
         trainingGroup.setSchedule(LocalDateTime.now().plusDays(1));
         trainingGroup.setTeacher(teacher);
         this.trainingGroupService.save(trainingGroup);
 
-        // Asignar grupo al estudiante
+        // Assign the training group to the student
         this.studentService.addGroupToStudent(student.getId(), trainingGroup);
 
-        // Sesión de entrenamiento
+        // Create a training session
         TrainingSession trainingSession = new TrainingSession();
         trainingSession.setTrainingGroup(trainingGroup);
         trainingSession.setDate(LocalDateTime.now().plusDays(2));
         trainingSession.setStatus(StatusValues.ACTIVE);
         this.trainingSessionService.save(trainingSession);
 
-
-        // Crear asistencia con sesión válida
+        // Add the training session to the group
         Assistance validAssistance = new Assistance();
         validAssistance.setDate(LocalDateTime.now());
         validAssistance.setStudent(student);
         validAssistance.setTrainingSession(trainingSession);
         this.studentService.addAssistanceToStudent(student, validAssistance);
 
-        // Factura para el estudiante
+        // Create an invalid assistance
         Invoice invoice = new Invoice();
         invoice.setUser(studentUser);
         invoice.setDate(LocalDateTime.now().minusDays(1));
@@ -280,13 +308,13 @@ public class TestDataSeeder implements CommandLineRunner {
         this.invoiceService.save(invoice);
         this.userService.addInvoiceToUser(studentUser, invoice);
 
-        // IVA TYPE
+        // Create an IVA type
         IVAType ivaGeneral = new IVAType();
         ivaGeneral.setPercentage(new BigDecimal("21.00"));
         ivaGeneral.setDescription("IVA General");
         this.ivaTypeService.save(ivaGeneral);
 
-        // PRODUCTO / SERVICIO
+        // Create a product/service
         ProductService jiuJitsuClass = new ProductService();
         jiuJitsuClass.setName("Clase de JiuJitsu");
         jiuJitsuClass.setType("Servicio");
@@ -295,7 +323,7 @@ public class TestDataSeeder implements CommandLineRunner {
         jiuJitsuClass.setStatus(StatusValues.ACTIVE);
         this.productServiceService.save(jiuJitsuClass);
 
-        // LÍNEA DE FACTURA
+        // Add the product/service to the invoice
         InvoiceLine line = new InvoiceLine();
         line.setInvoice(invoice);
         line.setProductService(jiuJitsuClass);
@@ -304,18 +332,16 @@ public class TestDataSeeder implements CommandLineRunner {
         line.setSubtotal(jiuJitsuClass.getPrice().multiply(BigDecimal.valueOf(line.getQuantity())));
         this.invoiceService.addLineToInvoice(invoice, line);
 
-
-        // PAGO (PAYMENT)
+        // Calculate the total with IVA
         Payment payment = new Payment();
         payment.setInvoice(invoice);
-        payment.setAmount(invoice.getTotal()); // Debe incluir el IVA si se calcula externamente
+        payment.setAmount(invoice.getTotal());
         payment.setPaymentMethod(PaymentMethodValues.CREDIT_CARD);
         payment.setPaymentDate(LocalDateTime.now());
         payment.setStatus(StatusValues.PAID);
         this.paymentService.save(payment);
 
-
-        // Mostrar todo
+        // Show all data in the console
         System.out.println("--- ROLES ---");
         this.roleService.findAll().forEach(System.out::println);
 

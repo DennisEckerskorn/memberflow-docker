@@ -1,7 +1,0 @@
-1. Comprobar seguridad y permisos en cada endpoint.
-2. Comprobar o arreglar el tema de los ID automáticos y los DTOs.
-3. Documentar los endpoints.
-4. Crear javadoc de cada metodo.
-5. Crear un README.md con la información del proyecto.
-7. Comprobar como funciona logger en cada endpoint.
-8. Mejorar excepciones y mensajes de error.

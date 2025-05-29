@@ -8,6 +8,11 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repository interface for managing Assistance entities.
+ * Provides methods to find assistance records by training session ID, student ID,
+ * and date range, as well as a method to find assistance by both training session ID and student ID.
+ */
 public interface AssistanceRepository extends JpaRepository<Assistance, Integer> {
     Assistance findByTrainingSessionId(Integer trainingSessionId);
 

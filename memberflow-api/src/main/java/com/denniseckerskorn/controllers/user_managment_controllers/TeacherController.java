@@ -18,6 +18,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for managing teachers.
+ * Provides endpoints for creating, retrieving, updating, and deleting teachers.
+ */
 @RestController
 @RequestMapping("/api/v1/teachers")
 @Tag(name = "Teacher Management", description = "Operations related to teachers")
@@ -26,14 +30,28 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final RoleService roleService;
 
+    /**
+     * Password encoder for encoding passwords.
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructor for TeacherController.
+     *
+     * @param teacherService Service for handling teacher records.
+     * @param roleService    Service for handling roles.
+     */
     public TeacherController(TeacherService teacherService, RoleService roleService) {
         this.teacherService = teacherService;
         this.roleService = roleService;
     }
 
+    /**
+     * Gets all teachers and returns them as a list of DTOs.
+     *
+     * @return ResponseEntity containing a list of TeacherDTOs or no content if none found.
+     */
     @Operation(summary = "Get all teachers", description = "Retrieve a list of all teachers")
     @GetMapping("/getAll")
     public ResponseEntity<List<TeacherDTO>> getAllTeachers() {
@@ -49,6 +67,12 @@ public class TeacherController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Creates a new teacher and returns the created teacher as a DTO.
+     *
+     * @param dto The TeacherDTO containing the details of the teacher to be created.
+     * @return ResponseEntity containing the created TeacherDTO.
+     */
     @Operation(summary = "Create a new teacher", description = "Create a new teacher")
     @PostMapping("/create")
     public ResponseEntity<TeacherDTO> createTeacher(@RequestBody TeacherDTO dto) {
@@ -57,6 +81,12 @@ public class TeacherController {
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(saved));
     }
 
+    /**
+     * Finds a teacher by their ID and returns it as a DTO.
+     *
+     * @param id The ID of the teacher to find.
+     * @return ResponseEntity containing the TeacherDTO or not found if it doesn't exist.
+     */
     @Operation(summary = "Find a teacher by ID", description = "Retrieve a teacher by their ID")
     @GetMapping("/findById/{id}")
     public ResponseEntity<TeacherDTO> findById(@PathVariable Integer id) {
@@ -67,6 +97,13 @@ public class TeacherController {
         return ResponseEntity.ok(convertToDTO(teacher));
     }
 
+    /**
+     * Updates an existing teacher and returns the updated teacher as a DTO.
+     *
+     * @param id  The ID of the teacher to update.
+     * @param dto The TeacherDTO containing the updated details of the teacher.
+     * @return ResponseEntity containing the updated TeacherDTO.
+     */
     @Operation(summary = "Update a teacher", description = "Update an existing teacher")
     @PutMapping("/update/{id}")
     public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable Integer id, @RequestBody TeacherDTO dto) {
@@ -76,7 +113,12 @@ public class TeacherController {
         return ResponseEntity.ok(convertToDTO(updated));
     }
 
-
+    /**
+     * Deletes a teacher by their ID.
+     *
+     * @param id The ID of the teacher to delete.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Delete a teacher", description = "Delete a teacher by their ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTeacher(@PathVariable Integer id) {
@@ -84,12 +126,25 @@ public class TeacherController {
         return ResponseEntity.ok("Teacher deleted successfully");
     }
 
-    // ----------------- Mapping ------------------
+    /* ----------------- Utils ------------------ */
 
+    /**
+     * Converts a Teacher entity to a TeacherDTO.
+     *
+     * @param teacher The Teacher entity to convert.
+     * @return The converted TeacherDTO.
+     */
     private TeacherDTO convertToDTO(Teacher teacher) {
         return TeacherDTO.fromEntity(teacher);
     }
 
+    /**
+     * Converts a TeacherDTO to a Teacher entity.
+     *
+     * @param dto      The TeacherDTO to convert.
+     * @param isCreate Indicates if this is a creation operation (true) or an update (false).
+     * @return The converted Teacher entity.
+     */
     private Teacher convertToEntity(TeacherDTO dto, boolean isCreate) {
         if (dto == null || dto.getUser() == null) {
             throw new InvalidDataException("User data is required");
@@ -133,5 +188,4 @@ public class TeacherController {
 
         return teacher;
     }
-
 }

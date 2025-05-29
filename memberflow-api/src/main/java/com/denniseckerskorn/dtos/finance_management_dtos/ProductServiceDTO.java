@@ -70,8 +70,6 @@ public class ProductServiceDTO {
         return entity;
     }
 
-    // Getters y setters
-
     public Integer getId() {
         return id;
     }

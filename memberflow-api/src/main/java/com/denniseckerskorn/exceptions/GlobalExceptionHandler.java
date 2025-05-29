@@ -24,6 +24,10 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * GlobalExceptionHandler handles exceptions thrown by the application.
+ * It provides a centralized way to manage error responses for various exceptions.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

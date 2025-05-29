@@ -23,15 +23,23 @@ public class AssistanceService extends AbstractService<Assistance, Integer> {
     private final AssistanceRepository assistanceRepository;
 
     /**
-     * Constructor for AssitanceService.
+     * Constructor for AssistanceService.
      *
-     * @param assistanceRepository the assistance repository
+     * @param assistanceRepository the repository for assistance records
      */
     public AssistanceService(AssistanceRepository assistanceRepository) {
         super(assistanceRepository);
         this.assistanceRepository = assistanceRepository;
     }
 
+    /**
+     * Creates a new Assistance entity with the current date and time.
+     *
+     * @param entity the assistance to create
+     * @return the created assistance entity
+     * @throws IllegalArgumentException if the assistance is null
+     * @throws DuplicateEntityException if the assistance already exists
+     */
     @Override
     public Assistance save(Assistance entity) throws IllegalArgumentException, DuplicateEntityException {
         logger.info("Saving assistance: {}", entity);
@@ -42,6 +50,15 @@ public class AssistanceService extends AbstractService<Assistance, Integer> {
         return super.save(entity);
     }
 
+    /**
+     * Updates an existing Assistance entity.
+     *
+     * @param entity the entity to update
+     * @return the updated assistance entity
+     * @throws IllegalArgumentException if the assistance is null
+     * @throws InvalidDataException     if the assistance data is invalid
+     * @throws EntityNotFoundException  if the assistance does not exist
+     */
     @Override
     public Assistance update(Assistance entity) throws IllegalArgumentException, InvalidDataException, EntityNotFoundException {
         logger.info("Updating assistance: {}", entity);
@@ -49,11 +66,26 @@ public class AssistanceService extends AbstractService<Assistance, Integer> {
         return super.update(entity);
     }
 
+    /**
+     * Gets the ID of the Assistance entity.
+     *
+     * @param entity the assistance entity
+     * @return the ID of the assistance entity
+     * @throws IllegalStateException if the entity does not have an ID
+     */
     @Override
     protected Integer getEntityId(Assistance entity) throws IllegalStateException {
         return super.getEntityId(entity);
     }
 
+    /**
+     * Finds an Assistance entity by its ID.
+     *
+     * @param id the ID of the assistance
+     * @return the found assistance entity
+     * @throws InvalidDataException    if the ID is null
+     * @throws EntityNotFoundException if the assistance does not exist
+     */
     @Override
     public Assistance findById(Integer id) throws InvalidDataException, EntityNotFoundException {
         logger.info("Finding assistance by ID: {}", id);
@@ -64,6 +96,13 @@ public class AssistanceService extends AbstractService<Assistance, Integer> {
         return super.findById(id);
     }
 
+    /**
+     * Deletes an Assistance entity by its ID.
+     *
+     * @param id the ID of the assistance to delete
+     * @throws InvalidDataException    if the ID is null
+     * @throws EntityNotFoundException if the assistance does not exist
+     */
     @Override
     public void deleteById(Integer id) throws InvalidDataException, EntityNotFoundException {
         logger.info("Deleting assistance by ID: {}", id);
@@ -75,12 +114,23 @@ public class AssistanceService extends AbstractService<Assistance, Integer> {
         super.deleteById(id);
     }
 
+    /**
+     * Finds all Assistance records.
+     *
+     * @return a list of all assistance records
+     */
     @Override
     public List<Assistance> findAll() {
         logger.info("Finding all assistance records");
         return super.findAll();
     }
 
+    /**
+     * Checks if an Assistance entity exists.
+     *
+     * @param entity the assistance entity to check
+     * @return true if the assistance exists, false otherwise
+     */
     @Override
     protected boolean exists(Assistance entity) {
         logger.info("Checking if assistance exists: {}", entity);

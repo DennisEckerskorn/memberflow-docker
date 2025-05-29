@@ -31,6 +31,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for managing students.
+ * Provides endpoints for creating, retrieving, updating, and deleting students.
+ */
 @RestController
 @RequestMapping("/api/v1/students")
 @Tag(name = "Student Management", description = "Operations related to student management")
@@ -42,9 +46,21 @@ public class StudentController {
     private final MembershipService membershipService;
     private final TrainingSessionService trainingSessionService;
 
+    /**
+     * Password encoder for encoding passwords.
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructor for StudentController.
+     *
+     * @param studentService         Service for handling student records.
+     * @param roleService            Service for handling roles.
+     * @param userService            Service for handling user records.
+     * @param membershipService      Service for handling membership records.
+     * @param trainingSessionService Service for handling training session records.
+     */
     public StudentController(StudentService studentService, RoleService roleService, UserService userService, MembershipService membershipService, TrainingSessionService trainingSessionService) {
         this.studentService = studentService;
         this.roleService = roleService;
@@ -53,6 +69,12 @@ public class StudentController {
         this.trainingSessionService = trainingSessionService;
     }
 
+    /**
+     * Registers a new student with the provided details.
+     *
+     * @param studentRegisterDTO The DTO containing the student's registration details.
+     * @return ResponseEntity containing the created StudentDTO.
+     */
     @Operation(summary = "Register a new Student", description = "Registers a new student with the provided details.")
     @PostMapping("/register")
     public ResponseEntity<StudentDTO> registerStudent(@RequestBody @Valid StudentRegisterDTO studentRegisterDTO) {
@@ -100,7 +122,11 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
+    /**
+     * Retrieves all students.
+     *
+     * @return ResponseEntity containing a list of StudentDTOs.
+     */
     @Operation(summary = "Get all Students", description = "Retrieves a list of all students.")
     @GetMapping("/getAll")
     public ResponseEntity<List<StudentDTO>> getAllStudents() {
@@ -114,6 +140,12 @@ public class StudentController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Creates a new student with the provided details.
+     *
+     * @param dto The StudentDTO containing the details of the student to be created.
+     * @return ResponseEntity containing the created StudentDTO.
+     */
     @Operation(summary = "Create a new Student", description = "Creates a new student with the provided details.")
     @PostMapping("/create")
     public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO dto) {
@@ -122,6 +154,13 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(saved));
     }
 
+    /**
+     * Updates an existing student with the provided details.
+     *
+     * @param id  The ID of the student to update.
+     * @param dto The StudentDTO containing the updated details of the student.
+     * @return ResponseEntity containing the updated StudentDTO.
+     */
     @Operation(summary = "Update an existing Student", description = "Updates the details of an existing student.")
     @PutMapping("/update/{id}")
     public ResponseEntity<StudentDTO> updateStudent(@PathVariable Integer id, @RequestBody StudentDTO dto) {
@@ -131,6 +170,12 @@ public class StudentController {
         return ResponseEntity.ok(convertToDTO(updated));
     }
 
+    /**
+     * Retrieves a student by their ID.
+     *
+     * @param id The ID of the student to find.
+     * @return ResponseEntity containing the StudentDTO or not found if the ID does not exist.
+     */
     @Operation(summary = "Find a Student by ID", description = "Retrieves a student by their ID.")
     @GetMapping("/findById/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable Integer id) {
@@ -138,6 +183,12 @@ public class StudentController {
         return ResponseEntity.ok(convertToDTO(student));
     }
 
+    /**
+     * Deletes a student by their ID.
+     *
+     * @param id The ID of the student to delete.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Delete a Student", description = "Deletes a student by their ID.")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable Integer id) {
@@ -145,6 +196,13 @@ public class StudentController {
         return ResponseEntity.ok("Student deleted successfully");
     }
 
+    /**
+     * Adds a history record to a student by their ID.
+     *
+     * @param id      The ID of the student to whom the history will be added.
+     * @param history The StudentHistory object containing the history details to be added.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Add a Student History", description = "Adds a history record to a student by their ID.")
     @PostMapping("/addStudentHistory/{id}")
     public ResponseEntity<String> addStudentHistory(@PathVariable Integer id, @RequestBody StudentHistory history) {
@@ -153,6 +211,12 @@ public class StudentController {
         return ResponseEntity.ok("Student history added successfully");
     }
 
+    /**
+     * Removes a history record from a student by their ID.
+     *
+     * @param id The ID of the history record to remove.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Remove a Student History", description = "Removes a history record from a student.")
     @DeleteMapping("/removeStudentHistory/{id}")
     public ResponseEntity<String> removeStudentHistory(@PathVariable Integer id) {
@@ -160,6 +224,13 @@ public class StudentController {
         return ResponseEntity.ok("Student history removed successfully");
     }
 
+    /**
+     * Adds a membership to a student by their ID.
+     *
+     * @param id         The ID of the student to whom the membership will be added.
+     * @param membership The Membership object containing the membership details to be added.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Add a Membership to a Student", description = "Adds a membership to a student by their ID.")
     @PostMapping("/addMembershipToStudent/{id}")
     public ResponseEntity<String> addMembershipToStudent(@PathVariable Integer id, @RequestBody Membership membership) {
@@ -168,6 +239,12 @@ public class StudentController {
         return ResponseEntity.ok("Membership added to student successfully");
     }
 
+    /**
+     * Removes a membership from a student by their ID.
+     *
+     * @param id The ID of the student from whom the membership will be removed.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Remove a Membership from a Student", description = "Removes a membership from a student by their ID.")
     @DeleteMapping("/removeMembershipFromStudent/{id}")
     public ResponseEntity<String> removeMembershipFromStudent(@PathVariable Integer id) {
@@ -175,6 +252,13 @@ public class StudentController {
         return ResponseEntity.ok("Membership removed from student successfully");
     }
 
+    /**
+     * Adds an assistance record to a student by their ID.
+     *
+     * @param id            The ID of the student to whom the assistance will be added.
+     * @param assistanceDTO The AssistanceDTO containing the details of the assistance to be added.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Add an Assistance to a Student", description = "Adds an assistance record to a student by their ID.")
     @PostMapping("/addAssistanceToStudent/{id}")
     public ResponseEntity<String> addAssistanceToStudent(@PathVariable Integer id, @RequestBody AssistanceDTO assistanceDTO) {
@@ -185,6 +269,13 @@ public class StudentController {
         return ResponseEntity.ok("Assistance added to student successfully");
     }
 
+    /**
+     * Removes an assistance record from a student by their ID.
+     *
+     * @param studentId    The ID of the student from whom the assistance will be removed.
+     * @param assistanceId The ID of the assistance record to remove.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Remove an Assistance from a Student", description = "Removes an assistance record from a student by their ID.")
     @DeleteMapping("/deleteAssistanceFromStudent/{id}")
     public ResponseEntity<String> deleteAssistanceFromStudent(@PathVariable Integer studentId, @PathVariable Integer assistanceId) {
@@ -192,6 +283,13 @@ public class StudentController {
         return ResponseEntity.ok("Assistance removed from student successfully");
     }
 
+    /**
+     * Adds a training group to a student by their ID.
+     *
+     * @param id    The ID of the student to whom the training group will be added.
+     * @param group The TrainingGroup object containing the details of the group to be added.
+     * @return ResponseEntity with a success message.
+     */
     @Operation(summary = "Add a Training Group to a Student", description = "Adds a training group to a student by their ID.")
     @PostMapping("/addGroupToStudent/{id}")
     public ResponseEntity<String> addGroupToStudent(@PathVariable Integer id, @RequestBody TrainingGroup group) {
@@ -199,6 +297,13 @@ public class StudentController {
         return ResponseEntity.ok("Training group added to student successfully");
     }
 
+    /**
+     * Updates a student's membership by their ID.
+     *
+     * @param studentId    The ID of the student whose membership will be updated.
+     * @param membershipId The ID of the membership to assign to the student.
+     * @return ResponseEntity indicating the result of the operation.
+     */
     @Operation(summary = "Update a student's membership")
     @PutMapping("/updateMembership/{studentId}")
     public ResponseEntity<Void> updateMembership(
@@ -216,13 +321,26 @@ public class StudentController {
 
 
 
-    /* ----------------- Mapping Methods ------------------  */
+    /* ----------------- Utils ------------------  */
 
+    /**
+     * Converts a Student entity to a StudentDTO.
+     *
+     * @param student The Student entity to convert.
+     * @return The converted StudentDTO.
+     */
     private StudentDTO convertToDTO(Student student) {
         return StudentDTO.fromEntity(student);
     }
 
 
+    /**
+     * Converts a StudentDTO to a Student entity.
+     *
+     * @param dto      The StudentDTO to convert.
+     * @param isCreate Indicates if the conversion is for creating a new student.
+     * @return The converted Student entity.
+     */
     private Student convertToEntity(StudentDTO dto, boolean isCreate) {
         if (dto == null || dto.getUser() == null) {
             throw new InvalidDataException("User data is required");
@@ -271,5 +389,4 @@ public class StudentController {
 
         return student;
     }
-
 }

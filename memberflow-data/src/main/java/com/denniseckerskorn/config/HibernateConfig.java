@@ -13,16 +13,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * Hibernate configuration class for setting up the EntityManagerFactory and DataSource.
+ * It uses HikariCP for connection pooling and configures JPA properties.
+ */
 @Configuration
 @EnableTransactionManagement
 public class HibernateConfig {
 
     private final Environment env;
 
+    /**
+     * Constructor to inject the Environment object for accessing properties.
+     *
+     * @param env the Environment object containing application properties
+     */
     public HibernateConfig(Environment env) {
         this.env = env;
     }
 
+    /**
+     * Bean definition for DataSource using HikariCP.
+     * Reads properties from the application environment.
+     *
+     * @return a configured DataSource instance
+     */
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
@@ -33,6 +48,12 @@ public class HibernateConfig {
         return dataSource;
     }
 
+    /**
+     * Bean definition for LocalContainerEntityManagerFactoryBean.
+     *
+     * @param dataSource the DataSource to be used by the EntityManagerFactory
+     * @return a configured LocalContainerEntityManagerFactoryBean instance
+     */
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
@@ -50,6 +71,13 @@ public class HibernateConfig {
         return emf;
     }
 
+    /**
+     * Bean definition for PlatformTransactionManager.
+     * Uses JpaTransactionManager to manage transactions.
+     *
+     * @param emf the LocalContainerEntityManagerFactoryBean to be used by the transaction manager
+     * @return a configured PlatformTransactionManager instance
+     */
     @Bean
     public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean emf) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();

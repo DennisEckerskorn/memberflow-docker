@@ -20,8 +20,6 @@ public class CreateInvoiceRequestDTO {
     public CreateInvoiceRequestDTO() {
     }
 
-    // Getters y setters
-
     public Integer getUserId() {
         return userId;
     }
@@ -62,7 +60,6 @@ public class CreateInvoiceRequestDTO {
         this.lines = lines;
     }
 
-    // Convierte el DTO a entidad base (sin líneas, requiere setUser)
     public Invoice toEntity(User user) {
         Invoice invoice = new Invoice();
         invoice.setUser(user);
@@ -72,7 +69,6 @@ public class CreateInvoiceRequestDTO {
         return invoice;
     }
 
-    // Crea el DTO desde una entidad (opcional)
     public static CreateInvoiceRequestDTO fromEntity(Invoice invoice) {
         CreateInvoiceRequestDTO dto = new CreateInvoiceRequestDTO();
         dto.setUserId(invoice.getUser() != null ? invoice.getUser().getId().intValue() : null);

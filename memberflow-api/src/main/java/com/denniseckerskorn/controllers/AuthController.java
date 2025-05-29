@@ -14,6 +14,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * AuthController handles user authentication requests.
+ * It provides an endpoint for user login, which returns a JWT token upon successful authentication.
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Authentication", description = "Operations related to user authentication")
@@ -23,12 +27,25 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
+    /**
+     * Constructor for AuthController.
+     *
+     * @param authenticationManager Authentication manager for handling authentication requests.
+     * @param jwtUtil               Utility class for generating JWT tokens.
+     * @param userService           Service for handling user-related operations.
+     */
     public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
 
+    /**
+     * API response codes for the login endpoint.
+     *
+     * @param loginRequest The login request containing user credentials.
+     * @return ResponseEntity containing the JWT token or an error message.
+     */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful login"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

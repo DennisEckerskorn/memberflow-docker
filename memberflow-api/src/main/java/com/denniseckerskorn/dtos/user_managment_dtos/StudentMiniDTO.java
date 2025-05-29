@@ -4,9 +4,10 @@ import java.util.Set;
 
 public class StudentMiniDTO {
     private Integer id;
-    private Set<StudentHistoryMiniDTO> histories; // 🔥 mini DTO
+    private Set<StudentHistoryMiniDTO> histories;
 
-    public StudentMiniDTO() {}
+    public StudentMiniDTO() {
+    }
 
     public Integer getId() {
         return id;

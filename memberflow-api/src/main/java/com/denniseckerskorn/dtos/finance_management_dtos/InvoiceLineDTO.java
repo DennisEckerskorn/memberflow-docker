@@ -25,7 +25,8 @@ public class InvoiceLineDTO {
 
     private BigDecimal subtotal;
 
-    public InvoiceLineDTO() {}
+    public InvoiceLineDTO() {
+    }
 
     public InvoiceLineDTO(InvoiceLine entity) {
         this.id = entity.getId();
@@ -50,9 +51,6 @@ public class InvoiceLineDTO {
         entity.setSubtotal(this.subtotal);
         return entity;
     }
-
-    // Getters y setters...
-
 
     public Integer getId() {
         return id;
