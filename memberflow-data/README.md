@@ -161,19 +161,15 @@ A continuación, se describen las relaciones principales entre las entidades:
 - **`TeacherService`**: Administra las operaciones relacionadas con los profesores, incluyendo asignación de grupos.
 - **`UserService`**: Proporciona lógica general para la gestión de usuarios, como autenticación y actualización de perfiles.
 
----
+### Servicios de Gestión Financiera
 
-## Estado Actual del Proyecto
+- **`InvoiceService`**: Gestiona la creación, modificación y validación de facturas. Calcula automáticamente el total con IVA y permite obtener facturas por usuario.
 
-- **Pruebas Locales**: Actualmente, el proyecto se prueba utilizando el módulo de `user_managment` de manera local. Esto incluye la gestión de usuarios, roles, permisos y notificaciones.
-- **Base de Datos**: La configuración de la base de datos está definida en el archivo `HibernateConfig`.
-- **Servicios**: Los servicios implementados hasta ahora incluyen lógica básica para la gestión de usuarios y clases.
+- **`InvoiceLineService`**: Administra las líneas de factura, que representan los ítems individuales facturados. Permite agregar o eliminar líneas dentro de una factura existente.
 
----
+- **`PaymentService`**: Gestiona los pagos asociados a facturas. Soporta pagos parciales y actualiza el estado de la factura dependiendo del monto abonado.
 
-## Instalación y Ejecución
+- **`ProductServiceService`**: Controla la creación, actualización y eliminación de productos o servicios que pueden ser facturados. Cada producto se asocia con un tipo de IVA.
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/tu-usuario/memberflow-data.git
-   cd memberflow-data
+- **`IVATypeService`**: Administra los tipos de IVA disponibles, sus porcentajes y descripciones. Se utiliza para el cálculo fiscal en las líneas de factura.
+
