@@ -14,8 +14,6 @@ A continuación, se presenta el diagrama entidad-relación que describe la estru
 
 El proyecto está diseñado para trabajar en conjunto con otro módulo llamado **MemberFlow-API**, que será responsable de exponer los controladores, manejar excepciones y proporcionar la interfaz de interacción con la web y otros clientes.
 
-Actualmente, el proyecto se encuentra en desarrollo y se prueba de manera local utilizando el módulo de `user_managment` hasta que se implemente la API y se pueda interactuar con una interfaz web.
-
 ---
 
 ## Estructura del Proyecto
